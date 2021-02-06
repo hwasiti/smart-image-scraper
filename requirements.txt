@@ -1,0 +1,8 @@
+# pip install -U -r requirements.txt
+
+flickrapi
+numpy
+pillow
+tqdm
+requests
+pandas
