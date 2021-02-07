@@ -16,7 +16,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-1. Create a Flicker account or sign-in
+1. Create a flickr account or sign-in
 2. Get an API Key from: https://www.flickr.com/services/apps/create/apply
 3. Create a file in the project directory named `credentials.json` and write your API key and Secret inside the file as:
 ```python
@@ -34,11 +34,11 @@ Longitude has a range of -180 to 180 , latitude of -90 to 90. Defaults to -180, 
 
 bbox should be: _minimum_longitude, minimum_latitude, maximum_longitude, maximum_latitude_
 
-**Please note that not all images has been uploaded with longitude and latitude metada in Flicker.** Images that has no such information are tagged with long:0 lat:0. 
+**Please note that not all images has been uploaded with longitude and latitude metada in flickr.** Images that has no such information are tagged with long:0 lat:0. 
 
 Also note that this is a square bounding box which not necessarily confined to a certain country if its landscape is quite different from a square.
 
-Converting N,S,E,W into range of -180 to 180 , latitude of -90 to 90:
+For converting N,S,E,W into range of -180 to 180 and latitude of -90 to 90 use the same numbers but replace the N,S,E,W into negative/positive signs:
 
 N latitude = positive
 
@@ -54,5 +54,62 @@ Philippines is located between 116° 40', and 126° 34' E longitude and 4° 40' 
 
 So, in order to download 10 images taken in this bounding box location use:
 ````python
-python flicker_scraper.py -s "monkey wild" -n 10 -d True -b "116 4 127 22"
+python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "116 4 127 22"
 ````
+
+### Testing the geographical bounding box
+
+With the above search parameters, I found that some of the image descriptions stated that the images are captured in Sandakan, Malaysia. Like this image (Note its description scraped from Flickr):
+
+<p align="center">
+
+  <img src="readme_files/flickr_monkey_wild-Sandakan.jpg">
+  On the island of Bohol, The Philippines live these interesting looking creatures.  An endangered species, we saw this one at a semi wild conservation centre near Corella in Bohol called: Tarsier Research and Development Center.\n\nWith incredibly good hearing and being nocturnal, we had to sneak around this enclosure to not disturb them too much.  Whilst open to tourists, only a small section is viewable leaving the rest of the population in peace.\n\nShot with a Nikon D3200 and a Nikon AF-S 70-300mm f\/4.5-5.6 VR
+
+</p>
+
+
+
+This was part of the results, because Sandakan's coordinates are:
+
+5.8394° N, 118.1172° E
+
+which are located inside the bbox of Philipines. Even if we use more accurate search for philipine by using fractions (converting the minutes into decimal fractions):
+````python
+python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "116.66 4.66 126.56 21.16"
+````
+
+we could not exclude the above result. Simply Sandakan, Malaysia located in part of the requested area.
+
+Let's test if we intentionally reduce the bbox area to exclude Sandakan coordinates by using:
+````python
+python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "119 6 127 22"
+````
+
+We see that the above result has been indeed excluded. These are two examples resulted which are indeed from the Philipines: 
+
+
+<p align="center">
+
+  <img src="readme_files/Flicker_monkey_wild-Philippines1.jpg">
+  On the island of Bohol, The <b>Philippines</b> live these interesting looking creatures.  An endangered species, we saw this one at a semi wild conservation centre near Corella in Bohol called: Tarsier Research and Development Center.\n\nWith incredibly good hearing and being nocturnal, we had to sneak around this enclosure to not disturb them too much.  Whilst open to tourists, only a small section is viewable leaving the rest of the population in peace.\n\nShot with a Nikon D3200 and a Nikon AF-S 70-300mm f\/4.5-5.6 VR
+</p>
+
+
+<p align="center">
+
+  <img src="readme_files/Flicker_monkey_wild-Philippines2.jpg">
+  I wanted to identify this bird hiding among the bushes. I did a quick google search when I got home to see if I could ID it. So, literally the first thing I Googled was &quot;Philippines white fantail&quot;. And there it was... Philippine Pied Fantail (Rhipidura nigritorquis)- at least that's what it looks like to me. Lucky first guess!!!\nThis guy (or girl?) lived in a small patch of forest right next to the nipa hut we were staying in. I saw him (or her?) there on several occasions. It even got territorial after the neighborhood kids let the monkey go from the mango tree (yes, you read that right!) Masaki, the <b>monkey</b>, wondered down to that small patch of forest with the harness still on her waist (and severed leash dragging behind her) and was immediately attacked by this little birdie.
+
+</p>
+
+Note that the previous image was for a bird in the Philippines. However, we search for monkey in the wild. That's because in the description in flickr there was a mention of a monkey. 
+
+So this shows how important is to clean the images.
+
+## How to clean the scraped images
+
+As we can see in the previous image above, not all scraped images will be accurately presenting the search terms. Simply because maybe the user uploaded the picture mentioned the search term for an another reason, even if it did not shown in the picture.
+
+Perhaps, the best way is to use a manual curation method like  Amazon Mechanical Turk. However, much more cheaper and faster option would be to scrap 10,000 images with the search term _cage_ and another 10,000 images with the search term _monkey_. Then train a deep learning multi-label CNN classifier on those images. This wil allow us to assign prediction scores to each scraped image to indicate what is the probability of the presence of cage and monkey in each image. Later on we can decide the set a threshold of prediction score probabilities to wade out low confident CNN prediction images from our dataset.
+
