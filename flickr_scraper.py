@@ -50,43 +50,43 @@ def download_photos(search_query, n=30, download=False, bbox=None):
 
     for count, photo in enumerate(photos):
         if count < n:
-            # try:
-            link = photo.get('url_o')  # photo with the original size
+            try:
+                link = photo.get('url_o')  # photo with the original size
 
-            # http://www.flickr.com/services/api/flickr.photos.search.html
-            if link is None:
-                link = 'https://farm%s.staticflickr.com/%s/%s_%s_b.jpg' % \
-                       (photo.get('farm'), photo.get('server'), photo.get('id'), photo.get('secret'))
+                # http://www.flickr.com/services/api/flickr.photos.search.html
+                if link is None:
+                    link = 'https://farm%s.staticflickr.com/%s/%s_%s_b.jpg' % \
+                           (photo.get('farm'), photo.get('server'), photo.get('id'), photo.get('secret'))
 
-            if download:
-                suffix = os.path.basename(link).split('.')[-1]
-                filename = 'images' + os.sep + 'flickr_' + search_query.replace(' ', '_') + '-' + str(
-                    count) + '.' + suffix
-                exif = download_img(link, filename)
+                if download:
+                    suffix = os.path.basename(link).split('.')[-1]
+                    filename = 'images' + os.sep + 'flickr_' + search_query.replace(' ', '_') + '-' + str(
+                        count) + '.' + suffix
+                    exif = download_img(link, filename)
 
-            now = datetime.now()
+                now = datetime.now()
 
-            filenames.append(filename.split(os.sep)[-1])  # only the base file name
-            date_of_downloads.append(now.strftime("%d/%m/%Y"))
-            time_of_downloads.append(now.strftime("%H:%M:%S"))
-            search_terms.append(search_query)
-            links.append(link)
-            titles.append(photo.get('title'))
-            descriptions.append(photo.find('description').text)  # 'description' is a nested XML and not an attr.
-            dates_taken.append(photo.get('datetaken'))
-            owner_names.append(photo.get('ownername'))
-            path_aliases.append(photo.get('pathalias'))
-            owners.append(photo.get('owner'))
-            latitudes.append(photo.get('latitude'))
-            longitudes.append(photo.get('longitude'))
-            images_tags.append(photo.get('tags'))
-            images_machine_tags.append(photo.get('machine_tags'))
-            images_views.append(photo.get('views'))
-            images_exif.append(str(exif))
+                filenames.append(filename.split(os.sep)[-1])  # only the base file name
+                date_of_downloads.append(now.strftime("%d/%m/%Y"))
+                time_of_downloads.append(now.strftime("%H:%M:%S"))
+                search_terms.append(search_query)
+                links.append(link)
+                titles.append(photo.get('title'))
+                descriptions.append(photo.find('description').text)  # 'description' is a nested XML and not an attr.
+                dates_taken.append(photo.get('datetaken'))
+                owner_names.append(photo.get('ownername'))
+                path_aliases.append(photo.get('pathalias'))
+                owners.append(photo.get('owner'))
+                latitudes.append(photo.get('latitude'))
+                longitudes.append(photo.get('longitude'))
+                images_tags.append(photo.get('tags'))
+                images_machine_tags.append(photo.get('machine_tags'))
+                images_views.append(photo.get('views'))
+                images_exif.append(str(exif))
 
-            print(f'{count + 1}/{n}: {link}')
-            # except Exception as e:
-            #     print(f'error in downloading item {count + 1}/{n}: {e}: {link}')
+                print(f'{count + 1}/{n}: {link}')
+            except Exception as e:
+                print(f'error in downloading item {count + 1}/{n}: {e}: {link}')
         else:
             break
 

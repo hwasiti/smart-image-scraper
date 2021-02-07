@@ -32,11 +32,18 @@ The script saves the following metada from the scraped images:
      'latitude', 'longitude', 'machine tags', 'views', 'tags', 'exif data',
      'species prediction score', 'cage prediction score']
 
+### EXIF fata
+
 EXIF data is being populated from the image file itself, since the Flickr api does not provide EXIF data retrieval, despite that it shows them in the web. I have considered scraping EXIF info from the website using 
 Beautiful Soup library, since EXIF contains a wealth of information that can be quite useful. However, EXIF data retrieval from the image files themselves proved to be more efficient.
 
-This [table](https://exiftool.org/TagNames/EXIF.html) lists all EXIF tags that can exist with any image file.
+There around _400 data items_ that can be stored in image EXIF metadata. This [table](https://exiftool.org/TagNames/EXIF.html) lists all EXIF tags that can exist with any image file.
 
+### EXIF Privacy and security
+
+Since the Exif tag contains metadata about the photo, it can pose a privacy problem. For example, a photo taken with a GPS-enabled camera can reveal the exact location and time it was taken, and the unique ID number of the device - this is all done by default - often without the user's knowledge. Many users may be unaware that their photos are tagged by default in this manner, or that specialist software may be required to remove the Exif tag before publishing. For example, a whistleblower, journalist or political dissident relying on the protection of anonymity to allow them to report malfeasance by a corporate entity, criminal, or government may therefore find their safety compromised by this default data collection. [Source: [Wikipedia](https://en.wikipedia.org/wiki/Exif)]
+
+Hence, in this project EXIF info and all other scraped metadata that contains sensitive or personal information (like names, personal, locations, ..etc) are encrypted.
 
 ## Geographical bounding box
 **bbox (Optional)**
@@ -87,19 +94,23 @@ This was part of the results, because Sandakan's coordinates are:
 
 5.8394° N, 118.1172° E
 
-which are located inside the bbox of Philipines. Even if we use more accurate search for philipine by using fractions (converting the minutes into decimal fractions):
+which is located inside the bbox of the Philippines. Even if we use more accurate search for philipine by using fractions (converting the minutes into decimal fractions). We could not exclude the above result. Sandakan is located in part of the requested area:
 ````python
 python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "116.66 4.66 126.56 21.16"
 ````
 
-we could not exclude the above result. Simply Sandakan, Malaysia located in part of the requested area.
+<p align="center">
+  <img src="readme_files/Sandakan_and_Philippines.jpg">
+  <br><i>The bounding box showing that Sandakan (Malysian city) located inside the bounding box of the Philippines.</i>
+</p>
+
 
 Let's test if we intentionally reduce the bbox area to exclude Sandakan coordinates by using:
 ````python
 python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "119 6 127 22"
 ````
 
-We see that the above result has been indeed excluded. These are two examples resulted which are indeed from the Philipines: 
+We see that the above result has been indeed excluded. These are two examples resulted which are indeed from the Philippines: 
 
 
 <p align="center">
