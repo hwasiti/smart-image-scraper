@@ -23,6 +23,21 @@ pip install -r requirements.txt
 {"KEY":"YOUR_API_KEY", "SECRET":"YOUR_API_SECRET"}
 ```
 
+## Metadata and associated text 
+
+The script saves the following metada from the scraped images: 
+
+    ['search term', 'date of download', 'time of download', 'filename', 'link',
+     'title', 'description', 'date taken', 'owner name', 'path alias', 'owner',
+     'latitude', 'longitude', 'machine tags', 'views', 'tags', 'exif data',
+     'species prediction score', 'cage prediction score']
+
+EXIF data is being populated from the image file itself, since the Flickr api does not provide EXIF data retrieval, despite that it shows them in the web. I have considered scraping EXIF info from the website using 
+Beautiful Soup library, since EXIF contains a wealth of information that can be quite useful. However, EXIF data retrieval from the image files themselves proved to be more efficient.
+
+This [table](https://exiftool.org/TagNames/EXIF.html) lists all EXIF tags that can exist with any image file.
+
+
 ## Geographical bounding box
 **bbox (Optional)**
 
