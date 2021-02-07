@@ -14,9 +14,10 @@ KEY = credentials['KEY']
 SECRET = credentials['SECRET']
 
 
-def download_photos(search_query, n=10, download=False, bbox = None):
+def download_photos(search_query, n=30, download=False, bbox = None):
     t = time.time()
     fr = FlickrAPI(KEY, SECRET)
+
     if n < 500:
         per_page = n
     else:
@@ -26,14 +27,16 @@ def download_photos(search_query, n=10, download=False, bbox = None):
     if bbox is not None and len(bbox) == 4:
         bbox = ','.join(bbox)
 
-    # API library details:
-    # https://stuvel.eu/flickrapi-doc/7-util.html#walking-through-all-photos-in-a-set
+    # API library details: https://stuvel.eu/flickrapi-doc/7-util.html#walking-through-all-photos-in-a-set
     # http://www.flickr.com/services/api/flickr.photos.search.html
+    # Explorer of search API: https://www.flickr.com/services/api/explore/?method=flickr.photos.search
+    extras = 'description,date_upload,date_taken,owner_name,geo,tags,machine_tags,o_dims,views,media,path_alias,url_o'
+
     photos = fr.walk(text=search_query,
-                     extras='url_o',
-                     per_page=per_page,  # 1-500
                      sort='relevance',
-                     bbox=bbox)
+                     bbox=bbox,
+                     extras=extras,
+                     per_page=per_page)
 
     if download:
         # image save folder
@@ -41,11 +44,10 @@ def download_photos(search_query, n=10, download=False, bbox = None):
         if not os.path.exists(dir):
             os.makedirs(dir)
 
-    filenames = []
-    date_of_downloads = []
-    time_of_downloads = []
-    search_terms = []
-    links = []
+    filenames, date_of_downloads, time_of_downloads, search_terms, links, path_aliases = [], [], [], [], [], []
+    titles, descriptions, dates_taken, owner_names, owners, latitudes, longitudes = [], [], [], [], [], [], []
+    images_tags, images_machine_tags, images_views = [], [], []
+
     for count, photo in enumerate(photos):
         if count < n:
             try:
@@ -56,31 +58,43 @@ def download_photos(search_query, n=10, download=False, bbox = None):
                     link = 'https://farm%s.staticflickr.com/%s/%s_%s_b.jpg' % \
                            (photo.get('farm'), photo.get('server'), photo.get('id'), photo.get('secret'))
 
-                metadata = photo.get('')
-
                 if download:
                     suffix = os.path.basename(link).split('.')[-1]
                     filename = 'images' + os.sep + search_query.replace(' ', '_') + '-' + str(count) + '.' + suffix
                     download_img(link, filename)
 
                 now = datetime.now()
+
                 filenames.append(filename.split(os.sep)[-1])  # only the base file name
                 date_of_downloads.append(now.strftime("%d/%m/%Y"))
                 time_of_downloads.append(now.strftime("%H:%M:%S"))
                 search_terms.append(search_query)
                 links.append(link)
+                titles.append(photo.get('title'))
+                descriptions.append(photo.find('description').text)  # 'description' is a nested XML and not an attr.
+                dates_taken.append(photo.get('datetaken'))
+                owner_names.append(photo.get('ownername'))
+                path_aliases.append(photo.get('pathalias'))
+                owners.append(photo.get('owner'))
+                latitudes.append(photo.get('latitude'))
+                longitudes.append(photo.get('longitude'))
+                images_tags.append(photo.get('tags'))
+                images_machine_tags.append(photo.get('machine_tags'))
+                images_views.append(photo.get('views'))
+
                 print(f'{count + 1}/{n}: {link}')
             except Exception as e:
                 print(f'error in downloading item {count + 1}/{n}: {e}: {link}')
         else:
             break
 
-    data = list(zip(search_terms, date_of_downloads, time_of_downloads, filenames, links))
-    df = pd.DataFrame(data, columns=['search term',
-                                     'date of download',
-                                     'time of download',
-                                     'filename',
-                                     'link'])
+    data = list(zip(search_terms, date_of_downloads, time_of_downloads, filenames, links,
+                    titles, descriptions, dates_taken, owner_names, path_aliases, owners,
+                    latitudes, longitudes, images_machine_tags, images_views, images_tags))
+
+    df = pd.DataFrame(data, columns=['search term', 'date of download', 'time of download', 'filename', 'link',
+                                     'title', 'description', 'date taken', 'owner name', 'path alias', 'owner',
+                                     'latitude', 'longitude', 'machine tags', 'views', 'tags'])
 
     print(f'Finished downloading in {time.time() - t} sec.')
     return df
@@ -89,7 +103,7 @@ def download_photos(search_query, n=10, download=False, bbox = None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--search', '-s', dest='search', type=str, default='monkey cage', help='search term')
-    parser.add_argument('--number', '-n', dest='n', type=int, default=10, help='number of images to download')
+    parser.add_argument('--number', '-n', dest='n', type=int, default=100, help='number of images to download')
     parser.add_argument('--download', '-d', dest='download', type=bool, default=True, help='download images (True or False)')
     parser.add_argument('--bbox', '-b', dest='bbox', required=False,
                         help='Geographical bounding box to search in. Should be separated by spaces like: '
@@ -105,11 +119,11 @@ if __name__ == '__main__':
         bbox = args.bbox.split(' ')
     except Exception as e:
         bbox = None
-        print('Geographical bounding box parsing error -> bbox will be ignored!')
+        print('Geographical bounding box unidentified -> bbox will be ignored!')
 
     if bbox and len(bbox) != 4:
         bbox = None
-        print('Geographical bounding box parsing error -> bbox will be ignored!')
+        print('Geographical bounding box unidentified -> bbox will be ignored!')
 
     if bbox:
         print('Searching within the Geographical bounding box: min_long, min_lat, max_long, max_lat', bbox)
@@ -119,4 +133,7 @@ if __name__ == '__main__':
                               download=args.download, # download images
                               bbox=bbox) # search within certain geographical limit
 
-    pd_data.to_csv(args.search + "_df.csv")
+    # Saving the csv with special character separator like ζ works well with even non-english commonly used text
+    # pd_data.to_csv(args.search + "_df.csv", encoding = 'utf-8-sig', sep = 'ζ')
+    pd_data.to_json(args.search + "_df.json")
+
