@@ -60,7 +60,7 @@ def download_photos(search_query, n=30, download=False, bbox = None):
 
                 if download:
                     suffix = os.path.basename(link).split('.')[-1]
-                    filename = 'images' + os.sep + search_query.replace(' ', '_') + '-' + str(count) + '.' + suffix
+                    filename = 'images' + os.sep + 'Flicker_' + search_query.replace(' ', '_') + '-' + str(count) + '.' + suffix
                     download_img(link, filename)
 
                 now = datetime.now()
@@ -134,6 +134,6 @@ if __name__ == '__main__':
                               bbox=bbox) # search within certain geographical limit
 
     # Saving the csv with special character separator like ζ works well with even non-english commonly used text
-    # pd_data.to_csv(args.search + "_df.csv", encoding = 'utf-8-sig', sep = 'ζ')
-    pd_data.to_json(args.search + "_df.json")
+    # pd_data.to_csv('Flicker_' + args.search + "_df.csv", encoding = 'utf-8-sig', sep = 'ζ')
+    pd_data.to_json('Flicker_' + args.search + "_df.json")
 
