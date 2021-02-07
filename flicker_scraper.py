@@ -134,6 +134,6 @@ if __name__ == '__main__':
                               bbox=bbox) # search within certain geographical limit
 
     # Saving the csv with special character separator like ζ works well with even non-english commonly used text
-    # pd_data.to_csv('Flicker_' + args.search + "_df.csv", encoding = 'utf-8-sig', sep = 'ζ')
+    pd_data.to_csv('Flicker_' + args.search + "_df.csv", encoding = 'utf-8-sig', sep = 'ζ')
     pd_data.to_json('Flicker_' + args.search + "_df.json")
 
