@@ -18,18 +18,18 @@ df_100 = pd.concat([df1_100, df2_100], ignore_index=True)
 df = pd.concat([df1, df2], ignore_index=True)
 
 # Saving merged DatFrames
-### fn = 'output' + os.sep + 'df_100_per_search.json'
-### df_100.to_json(fn)
-### print('Pandas DataFrame of the 1st 100 images from each search term has been saved in: ' + fn)
+fn = 'output' + os.sep + 'df_100_per_search.json'
+df_100.to_json(fn)
+print('Pandas DataFrame of the 1st 100 images from each search term has been saved in: ' + fn)
 
-### fn = 'output' + os.sep + 'df_all.json'
-### df.to_json(fn)
-### print('Pandas DataFrame of ALL images of all search term has been saved in: '  + fn)
+fn = 'output' + os.sep + 'df_all.json'
+df.to_json(fn)
+print('Pandas DataFrame of ALL images of all search term has been saved in: '  + fn)
 
 # Make DL predictions using Google Cloud Vision API.
 # Try the API: https://cloud.google.com/vision/docs/drag-and-drop
 # To work within the free tier of Google Cloud Vision API: we will predict
-# only for df_100.json (the 1st 100 images from each search term).
+# only for df_100 DataFrame items (the 1st 100 images from each search term).
 
 # Steps from: https://github.com/philipperemy/vision-api
 # 1. Browse here: https://cloud.google.com/vision/
@@ -49,10 +49,9 @@ labels_related = {'monkey': ['monkey', 'macaque', 'primate', 'mandrill', 'gibbon
                   'cage': ['cage', 'fence', 'fencing', 'mesh', 'shelter', 'net']}
 
 
-df_10_test = df_100.tail(10)
-df_10_test.set_index("filename", inplace=True)
+df_100.set_index("filename", inplace=True)
 
-for index, row in df_10_test.iterrows(): # check images one by one
+for index, row in df_100.iterrows(): # check images one by one
     resp = vision.request_vision_api('images' + os.sep + row.name , b64=False)  # row.name is the filename
     dict_google_response = json.loads(resp.content)
 
@@ -64,11 +63,11 @@ for index, row in df_10_test.iterrows(): # check images one by one
         if len([i for i in labels_related['monkey'] if
                 item['description'].lower() in i or i in item['description'].lower()]) > 0: # found a monkey label
             print('FOUND ' + item['description'].lower() + ": " + str(item['score']))
-            df_10_test.loc[row.name,'species prediction score'] = item['score']
+            df_100.loc[row.name, 'species prediction score'] = item['score']
             label_found = True
             break
     if not label_found:
-        df_10_test.loc[row.name,'species prediction score'] = 0.49  # Google vision will not return scores < 0.5
+        df_100.loc[row.name, 'species prediction score'] = 0.49  # Google vision will not return scores < 0.5
         print('NOT FOUND any label. Setting the score to 0.49 (below the Google Vision minimum score)')
 
     label_found = False
@@ -79,25 +78,25 @@ for index, row in df_10_test.iterrows(): # check images one by one
         if len([i for i in labels_related['cage'] if
                 item['description'].lower() in i or i in item['description'].lower()]) > 0:  # found a cage label
             print('FOUND ' + item['description'].lower() + ": " + str(item['score']))
-            df_10_test.loc[row.name,'cage prediction score'] = item['score']
+            df_100.loc[row.name, 'cage prediction score'] = item['score']
             label_found = True
             break
     if not label_found:
-        df_10_test.loc[row.name,'cage prediction score'] = 0.49  # Google vision will not return scores < 0.5
+        df_100.loc[row.name, 'cage prediction score'] = 0.49  # Google vision will not return scores < 0.5
         print('NOT FOUND any label. Setting the score to 0.49 (below the Google Vision minimum score)')
 
+df_100.reset_index(inplace=True)
 
-# print(str_to_write)
-pass
+# Saving merged DatFrames
+fn = 'output' + os.sep + 'df_100_per_search.json'
+df_100.to_json(fn)
+print('Pandas DataFrame of the 1st 100 images from each search term has been saved in: ' + fn)
 
-
-
+fn = 'output' + os.sep + 'df_all.json'
+df.to_json(fn)
+print('Pandas DataFrame of ALL images of all search term has been saved in: '  + fn)
 
 # Save prediction scores in dataframes
-
-
-
-
-
-# TODO: NEED to Encrypting sensitive data in df then deleting df1 and df2 from the storage (comment out the delete step)
-# TODO: Save df_100 and df to disk
+fn = 'output' + os.sep + 'df_100_per_search_with_PREDS.json'
+df_100.to_json(fn)
+print('Pandas DataFrame of the 1st 100 images from each search term WITH GOOGLE DL predictions has been saved in: ' + fn)

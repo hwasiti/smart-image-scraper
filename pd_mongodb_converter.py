@@ -1,16 +1,19 @@
 from pymongo import MongoClient
+import pandas as pd
 
+# Reading previously saved Pandas DataFrames
+fn = 'output' + os.sep + 'df_100_per_search_with_PREDS.json'
+df_100_per_search_with_PREDS = pd.read_json(open(fn, "r", encoding="utf-8-sig"))
 
-fn = 'df_100.json'
-df.to_json(fn)
-print('All dataframes combined and saved in:' + fn)
+fn = 'output' + os.sep + 'df_all.json'
+df_all = pd.read_json(open(fn, "r", encoding="utf-8-sig"))
 
-
+# TODO: Here or in prev Script: NEED to Encrypting sensitive data in df then deleting df1 and df2 from the storage (comment out the delete step)
 
 # Insert a Pandas dataframe to MongoDB
 myclient = MongoClient()  # Remember your uri string should be something like: "mongodb://localhost:27017/"
 mydb = myclient["mydatabase"]
 
-mongo_data = df.to_dict(orient='records')  # Here's our added param..
+mongo_data = df_100_per_search_with_PREDS.to_dict(orient='records')  # Here's our added param..
 
 mydb.insert_many(mongo_data)

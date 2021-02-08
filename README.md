@@ -24,8 +24,20 @@ So we need to install this PR request version (in case the PR has not been merge
 pip install git+https://github.com/richardpenman/reverse_geocode.git@0cde8566def3bd366a45b324909b640f97085a3d
 ```
 
+5. If you want to clean mislabelled scraped images with deep learning, the script `prediciton_scoring.py` will send the image one by one to Google Vision API to label them with Google's deep learning model, you will need to setup Google cloud project (as the below steps). 
+   
+The response from the cloud will be useful to provide the score of confidence of the model on whether there is monkey or cage in the image. Those scores will be saved in the database and can be used to wade out those that has scores < 0.50.
 
- 
+1. Browse here: https://cloud.google.com/vision/
+2. Create a Google account. You might be lucky and get $300 of free usage.
+3. Activate the Vision API with the free trial.
+4. Browse here: https://console.cloud.google.com/apis/credentials
+5. Go to credentials tab and create a new one. Create Credentials > API Key.
+6. save the KEY in the credentials.json file
+
+example: {"FLICKER_KEY":"YOUR_API_KEY", "FLICKER_SECRET":"YOUR_API_SECRET", "GOOGLE_VISION_KEY":"YOUR_API_KEY"}
+
+
 ## Usage
 
 1. Create a flickr account or sign-in
