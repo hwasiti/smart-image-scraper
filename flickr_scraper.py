@@ -121,7 +121,7 @@ def download_photos(search_query, n=30, download=False, bbox=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--search', '-s', dest='search', type=str, default='monkey wild', help='search term')
+    parser.add_argument('--search', '-s', dest='search', type=str, default='monkey cage', help='search term')
     parser.add_argument('--number', '-n', dest='n', type=int, default=1000, help='number of images to download')
     parser.add_argument('--download', '-d', dest='download', type=bool, default=True,
                         help='download images (True or False)')
@@ -155,14 +155,14 @@ if __name__ == '__main__':
 
     # Saving the csv with special character separator like ζ works well with even non-english commonly used text
     print()
-    fn = 'flickr_' + args.search.replace(' ', '_') + '_df.csv'
+    fn = 'output' + os.sep + 'flickr_' + args.search.replace(' ', '_') + '_df.csv'
     pd_data.to_csv(fn, encoding='utf-8-sig', sep='ζ')
     print('Image data saved in: ' + fn)
 
-    fn = 'flickr_' + args.search.replace(' ', '_') + '_df.json'
+    fn = 'output' + os.sep + 'flickr_' + args.search.replace(' ', '_') + '_df.json'
     pd_data.to_json(fn)
     print('Image data saved in: ' + fn)
 
-    fn = 'flickr_' + args.search.replace(' ', '_') + '_df_100.json'
+    fn = 'output' + os.sep + 'flickr_' + args.search.replace(' ', '_') + '_df_100.json'
     pd_data.head(100).to_json(fn)
     print('First 100 Image data saved in: ' + fn)
