@@ -19,10 +19,15 @@ df_all.reset_index(inplace=True)
 
 # Insert a Pandas dataframe to MongoDB
 myclient = MongoClient("mongodb://localhost:27017/")
-mydb = myclient["mydatabase"]
+mydb_100 = myclient["scraped_data_100"]
+mydb_all = myclient["scraped_data_all"]
 
-mongo_data = df_100_per_search_with_PREDS.to_dict(orient='records')  # Here's our added param..
+mongo_data_100 = df_100_per_search_with_PREDS.to_dict(orient='records')
+mongo_data_all = df_all.to_dict(orient='records')
 
-mycol = mydb["scraped_metadata"]
+mycol_100 = mydb_100["scraped_metadata_100_per_search_with_PREDS"]
+mycol_100.insert_many(mongo_data_100)
 
-mycol.insert_many(mongo_data)
+mycol_all = mydb_all["scraped_data_all"]
+mycol_all.insert_many(mongo_data_all)
+
