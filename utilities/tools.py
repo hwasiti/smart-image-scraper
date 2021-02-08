@@ -3,7 +3,7 @@ import requests
 import exifread
 from PIL import Image
 from pathlib import Path
-
+import reverse_geocode as rg
 
 def download_img(uri, filename):
 
@@ -21,5 +21,9 @@ def download_img(uri, filename):
     with open(filename, 'rb') as file:
         tags = exifread.process_file(file)
         return tags
+
+
+def reverse_geocode(coordinates):
+    return rg.search(coordinates)
 
 

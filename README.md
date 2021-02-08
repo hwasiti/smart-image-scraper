@@ -13,7 +13,19 @@ or alternatively a virtual-environment
 ````python
 pip install -r requirements.txt
 ````
+4. The package `reverse_geocode` is not up-to date and will result in runtime errors. Hence, install the most up-to-date package from GitHub:
+```python
+pip install git+https://github.com/richardpenman/reverse_geocode
+```
+On Windows machines there is a bug in the code where it is needed to specify encoding explicitly in case it isn't utf-8
 
+So we need to install this PR request version (in case the PR has not been merged yet):
+```python
+pip install git+https://github.com/richardpenman/reverse_geocode.git@0cde8566def3bd366a45b324909b640f97085a3d
+```
+
+
+ 
 ## Usage
 
 1. Create a flickr account or sign-in
@@ -28,9 +40,9 @@ pip install -r requirements.txt
 The script saves the following metada from the scraped images: 
 
     ['search term', 'date of download', 'time of download', 'filename', 'link',
-     'title', 'description', 'date taken', 'owner name', 'path alias', 'owner',
-     'latitude', 'longitude', 'machine tags', 'views', 'tags', 'exif data',
-     'species prediction score', 'cage prediction score']
+    'title', 'description', 'date taken', 'owner name', 'path alias', 'owner',
+    'latitude', 'longitude', 'country', 'city', 'machine tags', 'views', 'tags',
+    'exif data', 'species prediction score', 'cage prediction score']
 
 ### EXIF fata
 
@@ -72,7 +84,7 @@ W longitude = negative
 
 **For example:**
 
-Philippines is located between 116° 40', and 126° 34' E longitude and 4° 40' and 21° 10' N latitude
+The Philippines is located between 116° 40', and 126° 34' E longitude and 4° 40' and 21° 10' N latitude
 
 So, in order to download 10 images taken in this bounding box location use:
 ````python
@@ -94,14 +106,14 @@ This was part of the results, because Sandakan's coordinates are:
 
 5.8394° N, 118.1172° E
 
-which is located inside the bbox of the Philippines. Even if we use more accurate search for philipine by using fractions (converting the minutes into decimal fractions). We could not exclude the above result. Sandakan is located in part of the requested area:
+which is located inside the bbox of the Philippines. Even if we use more accurate search for the Philippines by using fractions (converting the minutes into decimal fractions), we could not exclude the above image result. Sandakan is simply located in part of the requested area:
 ````python
 python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "116.66 4.66 126.56 21.16"
 ````
 
 <p align="center">
   <img src="readme_files/Sandakan_and_Philippines.jpg">
-  <br><i>The bounding box showing that Sandakan (Malysian city) located inside the bounding box of the Philippines.</i>
+  <br><i>The bounding box showing that Sandakan (a Malaysian city) located inside the bounding box of the Philippines.</i>
 </p>
 
 
@@ -127,7 +139,11 @@ We see that the above result has been indeed excluded. These are two examples re
 
 Note that the previous image was for a bird in the Philippines. However, we search for monkey in the wild. That's because in the description in flickr there was a mention of a monkey. 
 
-So this shows how important is to clean the images.
+This shows how important is to clean the images. 
+
+### A better way to find images taken in certain city or country
+
+I used `reverse_geocode` python package to convert the longitude and latitude retreived from the flickr API to reverse geotag them into city and country names. So the better way perhaps is to scrap images without the `bbox` option, and filter the images later according to the desired country or city.
 
 ## How to clean the scraped images
 
