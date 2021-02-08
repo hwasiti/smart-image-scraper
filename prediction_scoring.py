@@ -94,9 +94,9 @@ print('Pandas DataFrame of the 1st 100 images from each search term has been sav
 
 fn = 'output' + os.sep + 'df_all.json'
 df.to_json(fn)
-print('Pandas DataFrame of ALL images of all search term has been saved in: '  + fn)
+print('Pandas DataFrame of ALL images of all search terms has been saved in: '  + fn)
 
 # Save prediction scores in dataframes
 fn = 'output' + os.sep + 'df_100_per_search_with_PREDS.json'
 df_100.to_json(fn)
-print('Pandas DataFrame of the 1st 100 images from each search term WITH GOOGLE DL predictions has been saved in: ' + fn)
+print('Pandas DataFrame of the 1st 100 images for each search term WITH GOOGLE DL predictions has been saved in: ' + fn)
