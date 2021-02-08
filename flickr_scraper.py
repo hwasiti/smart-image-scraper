@@ -153,6 +153,10 @@ if __name__ == '__main__':
                               download=args.download,  # download images
                               bbox=bbox)  # search within certain geographical limit
 
+    # Moving filename column as the 1st column
+    pd_data.set_index("filename", inplace=True)
+    pd_data.reset_index(inplace=True)
+
     # Saving the csv with special character separator like ζ works well with even non-english commonly used text
     print()
     fn = 'output' + os.sep + 'flickr_' + args.search.replace(' ', '_') + '_df.csv'
