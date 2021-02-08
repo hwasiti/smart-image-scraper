@@ -121,8 +121,8 @@ def download_photos(search_query, n=30, download=False, bbox=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--search', '-s', dest='search', type=str, default='monkey cage', help='search term')
-    parser.add_argument('--number', '-n', dest='n', type=int, default=100, help='number of images to download')
+    parser.add_argument('--search', '-s', dest='search', type=str, default='monkey wild', help='search term')
+    parser.add_argument('--number', '-n', dest='n', type=int, default=1000, help='number of images to download')
     parser.add_argument('--download', '-d', dest='download', type=bool, default=True,
                         help='download images (True or False)')
     parser.add_argument('--bbox', '-b', dest='bbox', required=False,

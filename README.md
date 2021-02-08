@@ -117,10 +117,16 @@ python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "116.66 4.66 126.56 2
 </p>
 
 
-Let's test if we intentionally reduce the bbox area to exclude Sandakan coordinates by using:
+Let's test if we intentionally reduce the size of the bbox area in a way to cut out some of the outer parts of the Philippines, to exclude Sandakan from the bbox range of coordinates by using:
 ````python
 python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "119 6 127 22"
 ````
+
+<p align="center">
+  <img src="readme_files/Philippines_without_Sandakan.jpg">
+  <br><i>Flickr metadata (Description): Smaller bbox area than the actual area of the Philippines that excludes Sandakan, Malaysia.</i>
+</p>
+
 
 We see that the above result has been indeed excluded. These are two examples resulted which are indeed from the Philippines: 
 
@@ -143,7 +149,9 @@ This shows how important is to clean the images.
 
 ### A better way to find images taken in certain city or country
 
-I used `reverse_geocode` python package to convert the longitude and latitude retreived from the flickr API to reverse geotag them into city and country names. So the better way perhaps is to scrap images without the `bbox` option, and filter the images later according to the desired country or city.
+I used `reverse_geocode` python package to convert the longitude and latitude retreived from the flickr API to reverse geotag them into city and country names. So the better way perhaps is to scrap images without the `bbox` option, and filter the images later according to the desired country or city. The downside of this method is that it does not search all flickr images on their servers. So the the pool of images that we are picking from is bounded by what we have scraped. 
+
+So the best way is to use bbox with an area covering the whole country of interest and then filter further using the country metadata saved by this script.
 
 ## How to clean the scraped images
 
