@@ -162,7 +162,7 @@ Perhaps, the best way is to use a manual curation method like  Amazon Mechanical
 For example, one of the image search results in flickr for the search term _monkey cage_ returned the following image:
 
 <p align="center">
-  <img src="readme_files/flickr_monkey_wild-Philippines2.jpg">
+  <img src="readme_files/monkey_cage_search.jpg">
   <br><i>Flickr metadata (Title): <b>Monkey</b> cage.</i>
 </p>
 
