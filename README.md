@@ -30,9 +30,9 @@ pip install git+https://github.com/richardpenman/reverse_geocode.git@0cde8566def
 
 1. Create a flickr account or sign-in
 2. Get an API Key from: https://www.flickr.com/services/apps/create/apply
-3. Create a file in the project directory named `credentials.json` and write your API key and Secret inside the file as:
+3. Create a file in the project directory named `credentials.json` and write your API key and Secret (and later for Google Vision API or other APIs) inside the file as:
 ```python
-{"KEY":"YOUR_API_KEY", "SECRET":"YOUR_API_SECRET"}
+{"FLICKER_KEY":"YOUR_API_KEY", "FLICKER_SECRET":"YOUR_API_SECRET", "GOOGLE_VISION_KEY":"YOUR_API_KEY"}
 ```
 
 ## Metadata and associated text 

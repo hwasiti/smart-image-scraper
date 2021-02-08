@@ -10,8 +10,8 @@ from utilities.tools import download_img, reverse_geocode
 with open('credentials.json') as file:
     credentials = json.load(file)
 
-KEY = credentials['KEY']
-SECRET = credentials['SECRET']
+KEY = credentials['FLICKER_KEY']
+SECRET = credentials['FLICKER_SECRET']
 
 
 def download_photos(search_query, n=30, download=False, bbox=None):
