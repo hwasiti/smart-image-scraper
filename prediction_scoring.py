@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import json
 from visionAPI import vision
+import warnings
+warnings.filterwarnings("ignore")
 
 # Merging DatFrames of your previously scraped search terms
 # You should change the file names of df1_100, df2_100, df1 and df2
@@ -28,11 +30,6 @@ df = pd.concat([df1, df2], ignore_index=True)
 # Try the API: https://cloud.google.com/vision/docs/drag-and-drop
 # To work within the free tier of Google Cloud Vision API: we will predict
 # only for df_100.json (the 1st 100 images from each search term).
-# Maximum supported image file size is 20 MB. # So we should repeat predictions of those images after down-sizing
-# those downloaded images.
-# Also, Note that the Vision API imposes a 10MB JSON request size limit;
-# larger files should be hosted on Cloud Storage or on the web, rather than being passed as base64-encoded content in
-# the JSON itself.
 
 # Steps from: https://github.com/philipperemy/vision-api
 # 1. Browse here: https://cloud.google.com/vision/
@@ -43,14 +40,55 @@ df = pd.concat([df1, df2], ignore_index=True)
 # 6. save the KEY in the credentials.json file
 # example: {"FLICKER_KEY":"YOUR_API_KEY", "FLICKER_SECRET":"YOUR_API_SECRET", "GOOGLE_VISION_KEY":"YOUR_API_KEY"}
 
-resp = vision.request_vision_api('images' + os.sep + 'flickr_monkey_cage-0.jpg', b64=False)
-dict_google_response = json.loads(resp.content)
-str_to_write = json.dumps(dict_google_response, indent=4)
+# ApI response will be with all labels with score_threshold above 0.5
+# There seems no way to decrease this threshold:
+# https://cloud.google.com/vision/docs/reference/rest/v1/AnnotateImageRequest
 
-for item in dict_google_response['responses'][0]['labelAnnotations']:
-    print(item['description'] + ": " + str(item['score']))
+labels_related = {'monkey': ['monkey', 'macaque', 'primate', 'mandrill', 'gibbon',
+                             'colobines', 'titi', 'langur'],
+                  'cage': ['cage', 'fence', 'fencing', 'mesh', 'shelter', 'net']}
 
-print(str_to_write)
+
+df_10_test = df_100.tail(10)
+df_10_test.set_index("filename", inplace=True)
+
+for index, row in df_10_test.iterrows(): # check images one by one
+    resp = vision.request_vision_api('images' + os.sep + row.name , b64=False)  # row.name is the filename
+    dict_google_response = json.loads(resp.content)
+
+    label_found = False
+    print()
+    print('Searching the label MONKEY or any related label for the image: ' + row.name)
+    for item in dict_google_response['responses'][0]['labelAnnotations']: # check Google api responded labels
+        print(item['description'] + ": " + str(item['score']))
+        if len([i for i in labels_related['monkey'] if
+                item['description'].lower() in i or i in item['description'].lower()]) > 0: # found a monkey label
+            print('FOUND ' + item['description'].lower() + ": " + str(item['score']))
+            df_10_test.loc[row.name,'species prediction score'] = item['score']
+            label_found = True
+            break
+    if not label_found:
+        df_10_test.loc[row.name,'species prediction score'] = 0.49  # Google vision will not return scores < 0.5
+        print('NOT FOUND any label. Setting the score to 0.49 (below the Google Vision minimum score)')
+
+    label_found = False
+    print()
+    print('Searching the label CAGE or any related label for the image: ' + row.name)
+    for item in dict_google_response['responses'][0]['labelAnnotations']:
+        print(item['description'] + ": " + str(item['score']))
+        if len([i for i in labels_related['cage'] if
+                item['description'].lower() in i or i in item['description'].lower()]) > 0:  # found a cage label
+            print('FOUND ' + item['description'].lower() + ": " + str(item['score']))
+            df_10_test.loc[row.name,'cage prediction score'] = item['score']
+            label_found = True
+            break
+    if not label_found:
+        df_10_test.loc[row.name,'cage prediction score'] = 0.49  # Google vision will not return scores < 0.5
+        print('NOT FOUND any label. Setting the score to 0.49 (below the Google Vision minimum score)')
+
+
+# print(str_to_write)
+pass
 
 
 

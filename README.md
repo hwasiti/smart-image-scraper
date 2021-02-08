@@ -159,3 +159,12 @@ As we can see in the previous image above, not all scraped images will be accura
 
 Perhaps, the best way is to use a manual curation method like  Amazon Mechanical Turk. However, much more cheaper and faster option would be to scrap 10,000 images with the search term _cage_ and another 10,000 images with the search term _monkey_. Then train a deep learning multi-label CNN classifier on those images. This wil allow us to assign prediction scores to each scraped image to indicate what is the probability of the presence of cage and monkey in each image. Later on we can decide the set a threshold of prediction score probabilities to wade out low confident CNN prediction images from our dataset.
 
+For example, one of the image search results in flickr for the search term _monkey cage_ returned the following image:
+
+<p align="center">
+  <img src="readme_files/flickr_monkey_wild-Philippines2.jpg">
+  <br><i>Flickr metadata (Title): <b>Monkey</b> cage.</i>
+</p>
+
+And it is obvious that the user when uploaded the image and made the title _Monkey cage_, it was not meant that in the cage was a monkey. So for such case the deep learning cleaning method is very useful. Indeed with the implemented Google Vision API use, the response was that there are no monkeys in the image.
+
