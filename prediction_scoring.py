@@ -40,7 +40,7 @@ print('Pandas DataFrame of ALL images of all search term has been saved in: '  +
 # 6. save the KEY in the credentials.json file
 # example: {"FLICKER_KEY":"YOUR_API_KEY", "FLICKER_SECRET":"YOUR_API_SECRET", "GOOGLE_VISION_KEY":"YOUR_API_KEY"}
 
-# ApI response will be with all labels with score_threshold above 0.5
+# API response will be with all labels with score_threshold above 0.5
 # There seems no way to decrease this threshold:
 # https://cloud.google.com/vision/docs/reference/rest/v1/AnnotateImageRequest
 
