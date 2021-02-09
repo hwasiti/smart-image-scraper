@@ -94,7 +94,7 @@ The script saves the following metadata from the scraped images:
 
 EXIF data is being populated from the image file itself since the Flickr api does not provide EXIF data retrieval, despite that Flickr shows them in the web. I have considered scraping EXIF info from the website using Beautiful Soup library since EXIF contains a wealth of information (~400 data fields) that can be quite useful. However, EXIF data retrieval from the image files themselves proved to be more efficient.
 
-There around _400 data items_ that can be stored in an image EXIF metadata. This [table](https://exiftool.org/TagNames/EXIF.html) lists all EXIF tags that can exist with any image file. Of course, not all images have been saved by the users contain EXIF and certainly not all images come with ALL EXIF data. Still, most images have tens or hundreds of such info and it is quite interesting to find this well of data from the downloaded images.
+There are around _400 data items_ that can be stored in an image EXIF metadata. This [table](https://exiftool.org/TagNames/EXIF.html) lists all EXIF tags that can exist with any image file. Of course, not all images have been saved by the users contain EXIF and certainly not all images come with ALL EXIF data. Still, most images have tens or hundreds of such info and it is quite interesting to find this well of data from the downloaded images.
 
 ### EXIF Privacy and security
 
@@ -176,10 +176,12 @@ python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "119 6 127 22"
 
 <p align="center">
   <img src="readme_files/Philippines_without_Sandakan.jpg">
-  <br><i>Flickr metadata (Description): Smaller bbox area than the actual area of the Philippines that excludes Sandakan, Malaysia.</i>
+  <br><i>Smaller bbox area than the actual area of the Philippines that excludes Sandakan, Malaysia.</i>
 </p>
 
-We see that the above result has indeed been excluded. These are two examples resulted which are indeed from the Philippines: 
+We see that the above result has indeed been excluded. 
+
+Furthermore, here are two examples resulted which are indeed from the Philippines: 
 
 
 <p align="center">
@@ -200,7 +202,7 @@ This shows how important is to clean the images.
 
 ### A better way to find images taken in a certain city or country
 
-I used `reverse_geocode` python package to convert the longitude and latitude retrieved from the Flickr API to reverse geotag them into city and country names. So the better way perhaps is to scrap images without the `bbox` option, and filter the images later according to the desired country or city. The downside of this method is that it does not search all Flickr images on its servers. So the pool of images that we are picking from is limited by what we have scraped. 
+I used `reverse_geocode` python package to convert the longitude and latitude retrieved from the Flickr API to reverse geotag them into city and country names. So the better way perhaps is to scrape images without the `bbox` option, and filter the images later according to the desired country or city. The downside of this method is that it does not search all Flickr images on its servers. So the pool of images that we are picking from is limited by what we have scraped. 
 
 So the best way is to use `bbox` with an area covering the whole country of interest and then filter further using the country metadata saved by this script.
 
@@ -208,7 +210,7 @@ So the best way is to use `bbox` with an area covering the whole country of inte
 
 As we can see in the previous image, not all scraped images will be accurately presenting the search terms. Simply because maybe the user uploaded the picture and mentioned the search term for another reason in the discussion or the title, even if it did not show in the picture's content.
 
-Perhaps, the best way is to use a manual curation method like  Amazon Mechanical Turk. However, a much cheaper and faster option would be to scrap 10,000 images with the search term _cage_ and another 10,000 images with the search term _monkey_ for example and train a deep learning multi-label CNN classifier on those images. This will allow us to assign prediction scores to each scraped image to indicate what is the probability of the presence of cage and monkey in each image. Later on, we can decide and set a threshold of prediction score probabilities to wade out low confident CNN prediction images from our dataset.
+Perhaps, the best way is to use a manual curation method like  Amazon Mechanical Turk. However, a much cheaper and faster option would be to scrape 10,000 images with the search term _cage_ and another 10,000 images with the search term _monkey_ for example and train a deep learning multi-label CNN classifier on those images. This will allow us to assign prediction scores to each scraped image to indicate what is the probability of the presence of cage and monkey in each image. Later on, we can decide and set a threshold of prediction score probabilities to wade out low confident CNN prediction images from our dataset.
 
 For example, one of the image search results in flickr for the search term _monkey cage_ returned the following image:
 
@@ -220,13 +222,13 @@ For example, one of the image search results in flickr for the search term _monk
 And it is obvious that the user when uploaded the image and made the title _Monkey cage_, it was not meant that in the cage was a monkey. So for such case, the deep learning cleaning method is very useful. Indeed, with the implemented Google Vision API use, the prediction score showed that there are no monkeys in the above image.
 
 ## Future work and enhancements
-* We could do better than Google Vision API. If we train our own deep learning model on the search terms by several thousands of scraped training data, potentially that can be a better customized model than what Google is providing. The Google Vision API is serving a DL model that has been [trained on ~20K of labels](https://stackoverflow.com/a/57649116/1970830), which can be quite challenging in terms of prediction accuracy. If we train on only a few search terms that we are interested in, the model will be much better. Besides, Google Vision API will not give labels that have lower than 0.5 confidence scores. In our experiments, we noticed that this threshold is relatively high and a few little vague monkey pictures are missed. If they would allow to set a lower threshold like 0.2 and let the user decide and pick her/his own threshold, that would be much better and flexible. In fact, I intend to build a web app that has a slider to assign the threshold for scores of cage and another slide for the threshold of monkeys predictions. By playing with these two slides, the user can see what is the optimum threshold values to choose.
+* We could do better than Google Vision API. If we train our own deep learning model on the search terms by several thousands of scraped training data, potentially that can be a better customized model than what Google is providing. The Google Vision API is serving a DL model that has been [trained on ~20K of labels](https://stackoverflow.com/a/57649116/1970830), which can be quite challenging in terms of prediction accuracy. If we train on only a few search terms that we are interested in, the model will be much better. Besides, Google Vision API will not give labels that have lower than 0.5 confidence scores. In our experiments, we noticed that this threshold is relatively high and a few little vague monkey pictures are missed. If they would allow to set a lower threshold like 0.2 and let the user decide and pick her/his own threshold, that would be much better and flexible. In fact, I intend to build a web app that has a slider to assign the threshold for scores of cage and another slider for the threshold of monkeys predictions. By playing with these two sliders, the user can see in real-time interaction with the image thumbnail list what is the optimum threshold values to choose.
   
 * Scraping the comments on the Flickr website. Retrieving the comments on images is not part of the Flickr API yet as shown in [FLickr API documentation](https://www.flickr.com/services/api/flickr.photos.search.html), By using beautifulsoup Python library we can scrape this information too.
   
-* Adding image scraping through other Search engines like the [BING image search api](https://www.microsoft.com/en-us/bing/apis/bing-image-search-api). Google previously provided an image search API, but it discontinued the service. However, traditional scraping methods can still be used to scrap from Google search results using browser automation libraries in Python like [Selenium](https://selenium-python.readthedocs.io) and [beautifulsoup HTML scraping Python library](https://pypi.org/project/beautifulsoup4/). A nice tutorial on using Bing search API can be found [here](https://www.pyimagesearch.com/2018/04/09/how-to-quickly-build-a-deep-learning-image-dataset/).
+* Adding image scraping through other Search engines like the [BING image search api](https://www.microsoft.com/en-us/bing/apis/bing-image-search-api). Google previously provided an image search API as well, but it discontinued the service. However, traditional scraping methods can still be used to scrape from Google search results using browser automation libraries in Python like [Selenium](https://selenium-python.readthedocs.io) and [beautifulsoup HTML scraping Python library](https://pypi.org/project/beautifulsoup4/). A nice tutorial on using Bing search API can be found [how-to-quickly-build-a-deep-learning-image-dataset](https://www.pyimagesearch.com/2018/04/09/how-to-quickly-build-a-deep-learning-image-dataset/).
   
-* Data mining using text and image DL methods. For example, a multi-modal DL model that uses both text and image data in training can be used to infer more accurate meaning and content recognition on the scraped images. Example of such a method in [this paper](https://github.com/vinaybysani/Image-Captioning-System--Deep-learning).
+* Data mining using text and image DL methods. For example, a multi-modal DL model that uses both text and image data in training can be used to infer more accurate meaning and content recognition on the scraped images. Example of such a method in this project: [Image-Captioning-System--Deep-learning](https://github.com/vinaybysani/Image-Captioning-System--Deep-learning).
 
 
 
