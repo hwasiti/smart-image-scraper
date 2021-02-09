@@ -236,4 +236,4 @@ And it is obvious that the user when uploaded the image and made the title _Monk
   <br><i>Combining Image and Language model <a href="https://github.com/vinaybysani/Image-Captioning-System--Deep-learning">(source)</a></i>
 </p>
 
-* 
+
