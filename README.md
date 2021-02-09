@@ -1,19 +1,23 @@
 # Smart Image Scraper
 
-The directory contains a Flickr scraper code that can be used to download images and a wealth of metadata using the Flickr API. Generally, the signal-to-noise ratio is high with search terms in Flickr. However, a few percent of images will not be quite right in term of search of relevance due to multiple of factors. For instance, if the search term has been mentioned in the description of the image in Flickr, it will show up in the results, even if that search query is not presented in the image itself.
+The directory contains a Flickr scraper code that can be used to download images and a wealth of metadata using the Flickr API. Generally, the signal-to-noise ratio is high with search terms in Flickr. However, a few percent of images will not be quite right in terms of search of relevance due to multiple factors. For instance, if the search term has been mentioned in the description of the image in Flickr, it will show up in the results, even if that search query is not presented in the image itself.
 
-To clean the images, another script has been included to apply Google Vision API image labeling service using deep convolutional neural networks trained by Google. The script will attach prediciton scoring values which are showing how is the deep learning model confident on the availability of the search terms in the picture. Later on the user can decide what to do with these confidence scores. Assigning a threshold value is suggested to wade out all images that have less scores below a certain confidence threshold.
+To clean the images, another script has been included to apply Google Vision API image labeling service using deep convolutional neural networks trained by Google. The script will attach prediction scoring values which are showing how is the deep learning model confident on the availability of the search terms in the picture. Later on the user can decide what to do with these confidence scores. Assigning a threshold value is suggested to wade out all images that have less scores below a certain confidence threshold.
 
-A third script, will encrypt the sensitive information scraped using an automatically random encryption key. This key can be used later on when decryption of this kind of info when it is necessary. Importantly, the database files will be served online or stored in disk drives and this will protect the scraped data from any potential security threats. The script will also generate NoSQL MongoDB database on a local (or online) MongoDB client for the scraped data.
+A third script will encrypt the sensitive information scraped using an automatically random encryption key. This key can be used later on when decryption of this kind of info when it is necessary. Importantly, the database files will be served online or stored in disk drives and this will protect the scraped data from any potential security threats. The script will also generate NoSQL MongoDB database on a local (or online) MongoDB client for the scraped data.
 
 ## Features
 
-* Image scraper with wealth of metadata downloaded from Flickr
+* Image scraper with a wealth of metadata downloaded from Flickr
 * EXIF data extractor from the image files (Flickr API does not provide a way to download them)
+  
 * Smart cleaning of the images to enhance the signal-to-noise ratio using Deep Learning models by Google Vision API.
-* Country and city information extraction which is not provided by FLickr API. Only longitude and latitude data available through the API. However, the script will infer the country and the city from those geotags by Reverse Geotagging of the images. This can be used later to even more filter out the scraped images, since a region of interest is sometimes not represented as a box (countries, cities..etc.). This can result in a cleaner data confined to a certain country/city.
-* Ability to limit the downloaded images from a certain box of region by assigning the minimum and maximum longitude and latitude in the search query step. This is performed through the Flickr API and not locally, which can potentially be better in terms of quantity of the results, since the filtering is carried out on all Flickr servers rather than on our local scraped images, where the upper bound is not limited by the number of our scraped images.
-* The search terms and scraped data can be in multiple languages. In our experiments, it showed that if we search the same term translated into multiple languages other than only English, results of the searched images will be much more in quantity. For instance, searching for a monkey, can be repeated with the search term in Italian, Spanish, Japanese, French, German, Chinese, Arabic, Russian...etc. The code respects the different encoding of the characters that is necessary to show texts in multiple languages.
+  
+* Country and city information extraction which is not provided by Flickr API. Only longitude and latitude data available through the API. However, the script will infer the country and the city from those geotags by Reverse Geotagging of the images. This can be used later to even more filtering out the scraped images since a region of interest is sometimes not represented as a box (countries, cities..etc.). This can result in cleaner data confined to a certain country/city.
+  
+* Ability to limit the downloaded images from a certain box of region by assigning the minimum and maximum longitude and latitude in the search query step. This is performed through the Flickr API and not locally, which can potentially be better in terms of quantity of the results since the filtering is carried out on all Flickr servers rather than on our local scraped images, where the upper bound is not limited by the number of our scraped images.
+  
+* The search terms and scraped data can be in multiple languages. In our experiments, it showed that if we search the same term translated into multiple languages other than only English, the results of the searched images will be much more in quantity. For instance, searching for a monkey can be repeated with the search term in Italian, Spanish, Japanese, French, German, Chinese, Arabic, Russian...etc. The code respects the different encoding of the characters that are necessary to show texts in multiple languages.
 
 
 ## Installation
@@ -29,11 +33,11 @@ or alternatively a virtual-environment
 ````python
 pip install -r requirements.txt
 ````
-4. The package `reverse_geocode` is not up-to date and will result in runtime errors. Hence, install the most up-to-date package from GitHub:
+4. The package `reverse_geocode` is not up-to-date and will result in runtime errors. Hence, install the most up-to-date package from GitHub:
 ```python
 pip install git+https://github.com/richardpenman/reverse_geocode
 ```
-On Windows machines there is a bug in the code where it is needed to specify encoding explicitly in case it isn't utf-8
+On Windows machines, there is a bug in the library above, where it is needed to deal with data that specifies encoding explicitly in case it isn't utf-8.
 
 So we need to install this PR request version (in case the PR has not been merged yet):
 ```python
@@ -48,7 +52,7 @@ The response from the cloud will be useful to provide the score of confidence of
 2. Create a Google account. You might be lucky and get $300 of free usage.
 3. Activate the Vision API with the free trial.
 4. Browse here: https://console.cloud.google.com/apis/credentials
-5. Go to credentials tab and create a new one. Create Credentials > API Key.
+5. Go to the credentials tab and create a new one. Create Credentials > API Key.
 6. Save the KEY in the credentials.json file
 
 example: {"FLICKER_KEY":"YOUR_API_KEY", "FLICKER_SECRET":"YOUR_API_SECRET", "GOOGLE_VISION_KEY":"YOUR_API_KEY"}
@@ -60,9 +64,9 @@ example: {"FLICKER_KEY":"YOUR_API_KEY", "FLICKER_SECRET":"YOUR_API_SECRET", "GOO
 ```python
 python flickr_scraper.py -s "monkey wild" -n 10 -d True
 ```
-* The images will be saved in `image` folder inside the project directory. The metadata will be temporarily saved in Pandas Dataframes inside the 'output' folder. These files should be deleted after completing all the steps, since no encryption yet has been applied on the sensitive information of the scraped metadata at this step yet. 
+* The images will be saved in `image` folder inside the project directory. The metadata will be temporarily saved in Pandas Dataframes inside the 'output' folder. These files should be deleted after completing all the steps since no encryption yet has been applied to the sensitive information of the scraped metadata at this step yet. 
 
-The  `flickr_scraper.py` script can be repeated as many times as wished with different search terms and conditions. In later steps, minor modification on the code should be applied to rename the pandas dataframes combined into one dataframe of all search queries.
+The  `flickr_scraper.py` script can be repeated as many times as wished with different search terms and conditions. In later steps, minor modifications to the code should be applied to rename the pandas dataframes which will be combined into one dataframe of all search queries.
 
 * If you would like to clean the data using Google Vision API, run the script `prediction_scoring.py`. The scores of the predictions will be saved in the same temporary Pandas DataFrames.
   
@@ -70,7 +74,7 @@ The  `flickr_scraper.py` script can be repeated as many times as wished with dif
 
 ## Usage details
 
-1. Create a flickr account or sign-in
+1. Create a Flickr account or sign-in
 2. Get an API Key from: https://www.flickr.com/services/apps/create/apply
 3. Create a file in the project directory named `credentials.json` and write your API key and Secret (and later for Google Vision API or other APIs) inside the file as:
 ```python
@@ -88,9 +92,9 @@ The script saves the following metadata from the scraped images:
 
 ### EXIF fata
 
-EXIF data is being populated from the image file itself, since the Flickr api does not provide EXIF data retrieval, despite that Flickr shows them in the web. I have considered scraping EXIF info from the website using Beautiful Soup library, since EXIF contains a wealth of information (~400 data fields) that can be quite useful. However, EXIF data retrieval from the image files themselves proved to be more efficient.
+EXIF data is being populated from the image file itself since the Flickr api does not provide EXIF data retrieval, despite that Flickr shows them in the web. I have considered scraping EXIF info from the website using Beautiful Soup library since EXIF contains a wealth of information (~400 data fields) that can be quite useful. However, EXIF data retrieval from the image files themselves proved to be more efficient.
 
-There around _400 data items_ that can be stored in an image EXIF metadata. This [table](https://exiftool.org/TagNames/EXIF.html) lists all EXIF tags that can exist with any image file. Of course not all images have been saved by the users contain EXIF and certainly not all images come with ALL EXIF data. Still, most images have tens or hundreds of such info and it is quite interesting to find this well of data from the downloaded images.
+There around _400 data items_ that can be stored in an image EXIF metadata. This [table](https://exiftool.org/TagNames/EXIF.html) lists all EXIF tags that can exist with any image file. Of course, not all images have been saved by the users contain EXIF and certainly not all images come with ALL EXIF data. Still, most images have tens or hundreds of such info and it is quite interesting to find this well of data from the downloaded images.
 
 ### EXIF Privacy and security
 
@@ -98,9 +102,9 @@ Since the Exif tag contains metadata about the photo, it can pose a privacy prob
 
 Hence, in this project EXIF info and all other scraped metadata that contains sensitive or personal information (like names, personal, locations, ..etc) are encrypted.
 
-The script `pd_to_mongodb_converter.py` is performing the encryption process before saving the data in MongoDB. Also there is an `assert` verification step performed that ensures the decrypted versions of the data files are the same like the original, to be validate that the encryption is done perfectly.
+The script `pd_to_mongodb_converter.py` is performing the encryption process before saving the data in MongoDB. Also, there is an `assert` verification step performed that ensures the decrypted versions of the data files are the same as the original, to validate that the encryption is done perfectly.
 
-The `cryptography` Python library was used which includes the Fernet recipe, a best-practices recipe for using cryptography. Fernet is an open standard, with ready implementations in a wide range of programming languages and it packages AES CBC encryption for you with version information, a timestamp and an HMAC signature to prevent message tampering.
+The `cryptography` Python library was used which includes the Fernet recipe, a best-practices recipe for using cryptography. Fernet is an open standard, with ready implementations in a wide range of programming languages and it packages AES CBC encryption for you with version information, a timestamp, and an HMAC signature to prevent message tampering.
 
 Fernet makes it very easy to encrypt and decrypt messages and keep you secure. It is the ideal method for encrypting data with a secret.
 
@@ -109,7 +113,7 @@ The sensitive fields encrypted are: `'owner name', 'path alias', 'owner', 'exif 
 ### Geographical bounding box argument
 **bbox (Optional)**
 
-this argumanet can be added to the command line of `flickr_scraper.py` as `--bbox` or `-b`.
+this argument can be added to the command line of `flickr_scraper.py` as `--bbox` or `-b`.
 
 A comma-delimited list of 4 values defining the Bounding Box of the area should follow that will assign the geographical area to be searched.
 
@@ -119,15 +123,15 @@ Longitude has a range of -180 to 180 , latitude of -90 to 90. Defaults to -180, 
 
 bbox should be: _minimum_longitude, minimum_latitude, maximum_longitude, maximum_latitude_
 
-**Please note that not all images has been uploaded with longitude and latitude metadata in flickr.** Images that has no such information are tagged with long:0 lat:0. 
+**Please note that not all images have been uploaded with longitude and latitude metadata in Flickr.** Images that have no such information are tagged with long:0 lat:0. 
 
-Also note that this is a square bounding box which not necessarily confined to a certain country if its landscape is quite different from a square.
+Also, note that this is a square bounding box which not necessarily confined to a certain country if its landscape is quite different from a square.
 
-For converting N,S,E,W into range of -180 to 180 and latitude of -90 to 90 use the same numbers but replace the N,S,E,W into negative/positive signs:
+For converting N,S,E,W into a range of -180 to 180 and latitude of -90 to 90 use the same numbers but replace the N,S,E,W into negative/positive signs:
 
 N latitude = positive
 
-N latitude = negative
+S latitude = negative
 
 E longitude = positive
 
@@ -155,7 +159,7 @@ This was part of the results of the bounding box of the Philippines, because San
 
 5.8394° N, 118.1172° E
 
-which is located inside the bbox of the Philippines. Even if we use more accurate search for the Philippines by using fractions of long and lat coordinates (converting the minutes degrees into decimal fractions), we could not exclude the above image result. Sandakan is simply located in part of the requested area:
+which is located inside the bbox of the Philippines. Even if we use a more accurate search for the Philippines by using fractions of long and lat coordinates (converting the minutes degrees into decimal fractions), we could not exclude the above image result. Sandakan is simply located in the part of the requested area:
 ````python
 python flickr_scraper.py -s "monkey wild" -n 10 -d True -b "116.66 4.66 126.56 21.16"
 ````
@@ -194,17 +198,17 @@ Note that the previous image was for a bird in the Philippines. However, we are 
 
 This shows how important is to clean the images. 
 
-### A better way to find images taken in certain city or country
+### A better way to find images taken in a certain city or country
 
-I used `reverse_geocode` python package to convert the longitude and latitude retrieved from the Flickr API to reverse geotag them into city and country names. So the better way perhaps is to scrap images without the `bbox` option, and filter the images later according to the desired country or city. The downside of this method is that it does not search all Flickr images on their servers. So the pool of images that we are picking from are limited by what we have scraped. 
+I used `reverse_geocode` python package to convert the longitude and latitude retrieved from the Flickr API to reverse geotag them into city and country names. So the better way perhaps is to scrap images without the `bbox` option, and filter the images later according to the desired country or city. The downside of this method is that it does not search all Flickr images on its servers. So the pool of images that we are picking from is limited by what we have scraped. 
 
 So the best way is to use `bbox` with an area covering the whole country of interest and then filter further using the country metadata saved by this script.
 
 ## How to clean the scraped images
 
-As we can see in the previous image, not all scraped images will be accurately presenting the search terms. Simply because maybe the user uploaded the picture and mentioned the search term for an another reason in the discussion or the title, even if it did not shown in the picture's content.
+As we can see in the previous image, not all scraped images will be accurately presenting the search terms. Simply because maybe the user uploaded the picture and mentioned the search term for another reason in the discussion or the title, even if it did not show in the picture's content.
 
-Perhaps, the best way is to use a manual curation method like  Amazon Mechanical Turk. However, a much more cheaper and faster option would be to scrap 10,000 images with the search term _cage_ and another 10,000 images with the search term _monkey_ for example, and train a deep learning multi-label CNN classifier on those images. This wil allow us to assign prediction scores to each scraped image to indicate what is the probability of the presence of cage and monkey in each image. Later on we can decide and set a threshold of prediction score probabilities to wade out low confident CNN prediction images from our dataset.
+Perhaps, the best way is to use a manual curation method like  Amazon Mechanical Turk. However, a much cheaper and faster option would be to scrap 10,000 images with the search term _cage_ and another 10,000 images with the search term _monkey_ for example and train a deep learning multi-label CNN classifier on those images. This will allow us to assign prediction scores to each scraped image to indicate what is the probability of the presence of cage and monkey in each image. Later on, we can decide and set a threshold of prediction score probabilities to wade out low confident CNN prediction images from our dataset.
 
 For example, one of the image search results in flickr for the search term _monkey cage_ returned the following image:
 
@@ -213,16 +217,16 @@ For example, one of the image search results in flickr for the search term _monk
   <br><i>Flickr metadata (Title): <b>Monkey</b> cage.</i>
 </p>
 
-And it is obvious that the user when uploaded the image and made the title _Monkey cage_, it was not meant that in the cage was a monkey. So for such case the deep learning cleaning method is very useful. Indeed, with the implemented Google Vision API use, the prediciton score showed that there are no monkeys in the above image.
+And it is obvious that the user when uploaded the image and made the title _Monkey cage_, it was not meant that in the cage was a monkey. So for such case, the deep learning cleaning method is very useful. Indeed, with the implemented Google Vision API use, the prediction score showed that there are no monkeys in the above image.
 
 ## Future work and enhancements
-* We could do better than Google Vision API. If we train our own deep learning model on the search terms by several thousands of scraped training data, potentially that can be a better customized model that what Google is providing. The Google Vision API is serving a DL model that has been [trained on ~20K of labels](https://stackoverflow.com/a/57649116/1970830), which can be quite challenging in terms of prediction accuracy. If we train on only few search terms that we are interested in, the model will be much better. Besides, Google Vision API will not give labels that has lower than 0.5 confidence scores. In our experiments, we noticed that this threshold is relatively high and a few little vague monkey pictures are missed. If they would allow to set lower threshold like 0.2 and let the user decide and pick her/his own threshold, that would be much better and flexible. In fact, I intend to build a web app that has a slider to assign the threshold for scores of cage and another slide for the threshold of monkeys predictions. By playing with these two slides, the user can see what is the optimum threshold values to choose.
+* We could do better than Google Vision API. If we train our own deep learning model on the search terms by several thousands of scraped training data, potentially that can be a better customized model than what Google is providing. The Google Vision API is serving a DL model that has been [trained on ~20K of labels](https://stackoverflow.com/a/57649116/1970830), which can be quite challenging in terms of prediction accuracy. If we train on only a few search terms that we are interested in, the model will be much better. Besides, Google Vision API will not give labels that have lower than 0.5 confidence scores. In our experiments, we noticed that this threshold is relatively high and a few little vague monkey pictures are missed. If they would allow to set a lower threshold like 0.2 and let the user decide and pick her/his own threshold, that would be much better and flexible. In fact, I intend to build a web app that has a slider to assign the threshold for scores of cage and another slide for the threshold of monkeys predictions. By playing with these two slides, the user can see what is the optimum threshold values to choose.
   
-* Scraping the comments on the FLickr website. Retrieving the comments on images is not part of the Flickr API yet as shown in [FLickr API documentation](https://www.flickr.com/services/api/flickr.photos.search.html), By using beautifulsoup Python library we can scrap this information too.
+* Scraping the comments on the Flickr website. Retrieving the comments on images is not part of the Flickr API yet as shown in [FLickr API documentation](https://www.flickr.com/services/api/flickr.photos.search.html), By using beautifulsoup Python library we can scrape this information too.
   
-* Adding image scraping through other Search engines like the [BING image search api](https://www.microsoft.com/en-us/bing/apis/bing-image-search-api). Google previously provided an image search API, but it discontinued the service. However, traditional scraping methods can still be used to scrap from Google search results using browser automation libraries in Python like [Selenium](https://selenium-python.readthedocs.io) and [beautifulsoup html scraping Python library](https://pypi.org/project/beautifulsoup4/). A nice tutorial on using Bing search API can be found [here](https://www.pyimagesearch.com/2018/04/09/how-to-quickly-build-a-deep-learning-image-dataset/).
+* Adding image scraping through other Search engines like the [BING image search api](https://www.microsoft.com/en-us/bing/apis/bing-image-search-api). Google previously provided an image search API, but it discontinued the service. However, traditional scraping methods can still be used to scrap from Google search results using browser automation libraries in Python like [Selenium](https://selenium-python.readthedocs.io) and [beautifulsoup HTML scraping Python library](https://pypi.org/project/beautifulsoup4/). A nice tutorial on using Bing search API can be found [here](https://www.pyimagesearch.com/2018/04/09/how-to-quickly-build-a-deep-learning-image-dataset/).
   
-* Data mining using text and image DL methods. For example, a multi-modal DL model that uses both text and image data in training, can be used to infer more accurate meaning and content recognition on the scraped images. Example of such a method in [this paper](https://github.com/vinaybysani/Image-Captioning-System--Deep-learning).
+* Data mining using text and image DL methods. For example, a multi-modal DL model that uses both text and image data in training can be used to infer more accurate meaning and content recognition on the scraped images. Example of such a method in [this paper](https://github.com/vinaybysani/Image-Captioning-System--Deep-learning).
 
 
 
