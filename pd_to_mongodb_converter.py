@@ -88,7 +88,7 @@ mycol_all_encrypted = mydb_all_encrypted["scraped_data_all_encrypted"]
 mycol_all_encrypted.insert_many(mongo_data_all_encrypted)
 
 # Repeat the above to store not encrypted MongoDB files (just for demonstration purposes)
-# Later on for security reasons, any files that did encrypt sensitive info should be commented out
+# Later on for security reasons, any files that did not encrypt sensitive info should be deleted
 mydb_100 = myclient["scraped_data_100"]
 mydb_all = myclient["scraped_data_all"]
 
