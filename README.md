@@ -16,7 +16,6 @@ A third script, will encrypt the sensitive information scraped using an automati
 * The search terms and scraped data can be in multiple languages. In our experiments, it showed that if we search the same term translated into multiple langauges other than only the English, results of the searched images will be much more. FOr instance, searching for a monkey, can be repeated with the search term in Italian, Spanish, Japanese, French, German, Chinese, Arabic, Russian...etc. The code respects the different encoding of the characters that is necessary to show texts in mutliple langauges.
 
 
-
 ## Installation
 
 1. Clone the repo
@@ -61,7 +60,10 @@ example: {"FLICKER_KEY":"YOUR_API_KEY", "FLICKER_SECRET":"YOUR_API_SECRET", "GOO
 ```python
 python flickr_scraper.py -s "monkey wild" -n 10 -d True
 ```
-* The images will be saved in `image` folder inside the project directory. The metadata will be temporarily saved in Pandas Dataframes inside the 'output' folder. These files should be deleted after completing all the steps, since no encryption yet has been applied on the sensitive information of the scraped metadata yet.
+* The images will be saved in `image` folder inside the project directory. The metadata will be temporarily saved in Pandas Dataframes inside the 'output' folder. These files should be deleted after completing all the steps, since no encryption yet has been applied on the sensitive information of the scraped metadata yet. 
+
+The  `flickr_scraper.py` script can be repeated as many time as wished with different search terms and conditions. In later steps, minor modifications on the code should be appliead to rename the pandas dataframes combined to be added into one database file for all search queries.
+
 * If you would like to clean the data using Google Vision API, run the script `prediction_scoring.py`. The scores of the predictions will be saved in the same temporary Pandas DataFrames
 * Run `pd_to_mongodb_converter.py` to convert he Pandas DataFrames into MongoDB. Please note you should have MongoDB installed locally or you should use your own MongoDB server online for this step.
 
@@ -221,16 +223,18 @@ And it is obvious that the user when uploaded the image and made the title _Monk
 * We could do better than Google Vision API cleaning method. If we train our own deep learning model on the search terms by several thousands of scraped training data, potentially that can be a better customized model that what Google is providing. The Google Vision API is providing a model that has been trained on ~20K of labels, which can be quite challenging in terms of prediciton accuracy. If we train on only our interested in few search terms, the model will be much better. Besides, Google Vision API will not give labels that has lower than 0.5 confidence scores. In our experiments, we noticed that this threshold is relatively high and few little vague monkey pictures are missed. If they would allow lower threshold to be set like 0.2 and let the user decide the pick her/his own threshold, that would be much better. In fact, I intend to build a web app that has a slider to assign the threshold for scores of cage and another slide for the threshold of monkeys. By playing with these two slides, the user can see what is the optimum thrshold values to choose.
 * Scraping the comments on the FLickr website. Retrieving the comments on images is not part of the Flickr API yet, By using Beautiful Soup library we can scrap these information too.
 * Adding image scraping through other Search engines like the [BING image search api](https://www.microsoft.com/en-us/bing/apis/bing-image-search-api). Google previosuly provided an image search API but it discontinued the service. However, traditional scraping methods can still be used to scrap from Google search results using browser automation libraries in Python like [Selenium](https://selenium-python.readthedocs.io) and [beautifulsoup html scraping Python library](https://pypi.org/project/beautifulsoup4/).
-* Data mining using text and image DL methods. For example, a multi-modal model that use both text and image as training data which can be used to infer more accurate meaning and content on the scraped data. Example of such a method in [this paper](https://github.com/vinaybysani/Image-Captioning-System--Deep-learning#Intent;component=/;end).
+* Data mining using text and image DL methods. For example, a multi-modal model that use both text and image as training data which can be used to infer more accurate meaning and content on the scraped data. Example of such a method in [this paper](https://github.com/vinaybysani/Image-Captioning-System--Deep-learning).
 
 
 
 <p align="center">
   <img src="readme_files/LSTM and CNN multimodal model1.png">
-  <br><i>Combining Image and Language model [Source](https://github.com/vinaybysani/Image-Captioning-System--Deep-learning#Intent;component=/;end)</i>
+  <br><i>Combining Image and Language model <a href="https://github.com/vinaybysani/Image-Captioning-System--Deep-learning">(source)</a></i>
 </p>
 
 <p align="center">
   <img src="readme_files/LSTM and CNN multimodal model2.png">
-  <br><i>Combining Image and Language model [Source](https://github.com/vinaybysani/Image-Captioning-System--Deep-learning#Intent;component=/;end)</i>
+  <br><i>Combining Image and Language model <a href="https://github.com/vinaybysani/Image-Captioning-System--Deep-learning">(source)</a></i>
 </p>
+
+* 
