@@ -4,7 +4,7 @@ The directory contains a Flickr scraper code that can be used to download images
 
 To clean the images, another script has been included to apply Google Vision API image labeling service using deep convolutional neural networks trained by Google. The script will attach prediction scoring values which are showing how is the deep learning model confident on the availability of the search terms in the picture. Later on the user can decide what to do with these confidence scores. Assigning a threshold value is suggested to wade out all images that have less scores below a certain confidence threshold.
 
-A third script will encrypt the sensitive information scraped using an automatically random encryption key. This key can be used later on when decryption of this kind of info when it is necessary. Importantly, the database files will be served online or stored in disk drives and this will protect the scraped data from any potential security threats. The script will also generate NoSQL MongoDB database on a local (or online) MongoDB client for the scraped data.
+A third script will encrypt the sensitive information scraped using an automatically random encryption key. This key can be used later on when decryption of this kind of info is necessary. Importantly, the database files will be served online or stored in disk drives and this will protect the scraped data from any potential security threats. The script will also generate NoSQL MongoDB database on a local (or online) MongoDB client for the scraped data.
 
 ## Features
 
@@ -90,7 +90,7 @@ The script saves the following metadata from the scraped images:
     'latitude', 'longitude', 'country', 'city', 'machine tags', 'views', 'tags',
     'exif data', 'species prediction score', 'cage prediction score']
 
-### EXIF fata
+### EXIF data
 
 EXIF data is being populated from the image file itself since the Flickr api does not provide EXIF data retrieval, despite that Flickr shows them in the web. I have considered scraping EXIF info from the website using Beautiful Soup library since EXIF contains a wealth of information (~400 data fields) that can be quite useful. However, EXIF data retrieval from the image files themselves proved to be more efficient.
 
