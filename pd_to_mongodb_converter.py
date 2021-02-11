@@ -27,9 +27,13 @@ df_all.reset_index(inplace=True)
 # with open('KEY_DB.txt', 'w') as file:
 #     file.write(key.decode())
 
-# Read the key from the stored key file
-with open('KEY_DB.txt', 'r') as file:
-    key = file.read().encode()
+# Read the encryption key from the stored key file
+try:
+    with open('KEY_DB.txt', 'r') as file:
+        key = file.read().encode()
+except FileNotFoundError:
+    print("You should create a file <KEY_DB.txt> contains the encryption key. Please re-run this script after "
+          "uncommenting generating the encryption key and saving this file.")
 # print("Key:", key.decode())
 
 def encrypt(message: bytes, key: bytes) -> bytes:
