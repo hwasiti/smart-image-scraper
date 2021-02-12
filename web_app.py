@@ -1,4 +1,5 @@
 import os
+from io import StringIO
 import streamlit as st
 import pymongo
 import pandas as pd
@@ -13,28 +14,116 @@ def decrypt(token: bytes, key: bytes) -> bytes:
     return Fernet(key).decrypt(token)
 
 
-def read_encrypt_key():
+def check_encrypt_and_passw_files():
     # Read the encryption key from the stored key file
+
     try:
         with open('KEY_DB.txt', 'r') as file:
             key = file.read().encode()
+            encrypt_key_file_found = True
     except FileNotFoundError:
-        print("You should create a file <KEY_DB.txt> contains the encryption key. Please re-run this script after "
-              "copying the encryption key and saving this file in the project root directory.")
-        exit()
-    return key
+            encrypt_key_file_found = False
 
-def read_db_password():
+    try:
+        with open('PASSW_DB.txt', 'r') as file:
+            passw = file.read().replace('\n', '')
+            db_password_file_found = True
+    except FileNotFoundError:
+        db_password_file_found = False
+
+    if encrypt_key_file_found and db_password_file_found:
+        main()
+    elif not encrypt_key_file_found and db_password_file_found:
+        # let's upload encrypt_key_file_found
+        uploaded_file = st.file_uploader('Upload the file <KEY_DB.txt> which contains the encryption key.', type='txt', accept_multiple_files=False, key='111')
+    elif  encrypt_key_file_found and not db_password_file_found:
+        # let's upload db_password_file_found
+        uploaded_file = st.file_uploader('Upload the file <PASSW_DB.txt> which contains the password of the MongoDB Atlas online service. ',  type='txt', accept_multiple_files=False, key='222')
+    else:
+        # let's upload both
+        uploaded_file = st.file_uploader('Upload both the files <KEY_DB.txt> and <PASSW_DB.txt> which contains the encryption key and the password of the MongoDB Atlas online service. ', type='txt',
+                                            accept_multiple_files=True, key='333')
+    if uploaded_file is not None and uploaded_file !=[]:
+
+        if not encrypt_key_file_found and not db_password_file_found:
+            for fl in uploaded_file:
+                # To convert to a string based IO:
+                stringio = StringIO(fl.getvalue().decode("utf-8"))
+                # To read file as string:
+                string_data = stringio.read()
+                with open(fl.name, 'w') as file:
+                    file.write(string_data)
+            st.experimental_rerun()
+
+        if not encrypt_key_file_found and db_password_file_found:
+            stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+            # To read file as string:
+            string_data = stringio.read()
+            with open(uploaded_file.name, 'w') as file:
+                file.write(string_data)
+            st.experimental_rerun()
+
+        if  encrypt_key_file_found and not db_password_file_found:
+            # To convert to a string based IO:
+            stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+
+            # To read file as string:
+            string_data = stringio.read()
+            with open(uploaded_file.name, 'w') as file:
+                file.write(string_data)
+            st.experimental_rerun()
+
+        ###########
+    #
+    #     with open('PASSW_DB.txt', 'r') as file:
+    #         passw = file.read().replace('\n', '')
+    #         db_password_file_found = True
+    #     except FileNotFoundError:
+    #
+    #     uploaded_file = st.file_uploader('Upload the file <KEY_DB.txt> which contains the encryption key. Please ignore the DuplicateWidgetID error! This is a bug in the streamlit package.', type='txt', accept_multiple_files = False, key='111')
+    #     encrypt_key_reading_in_process = True
+    #     if uploaded_file is not None:
+    #         # To convert to a string based IO:
+    #         stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+    #
+    #         # To read file as string:
+    #         string_data = stringio.read()
+    #         with open('KEY_DB.txt', 'w') as file:
+    #             file.write(string_data)
+    #         st.experimental_rerun()
+    # else:
+    #     if db_password_file_found == True:
+    #         main()
+    #     elif db_password_reading_in_process == False:
+    #         check_db_password()
+    #     # otherwise we should wait uploading the db_password_file and from there we continue
+
+
+def check_db_password():
     # Read the password of the online Mongo Atlas DB from the stored password file
     try:
         with open('PASSW_DB.txt', 'r') as file:
             passw = file.read().replace('\n', '')
+            db_password_file_found = True
     except FileNotFoundError:
-        print(
-            "You should create a file <PASSW_DB.txt> contains the password to access the online Mongo Atlas DB. Please "
-            "re-run this script after saving this file in the project root directory.")
-        exit()
-    return passw
+        uploaded_file = st.file_uploader('Upload the file <PASSW_DB.txt> which contains the password of the MongoDB Atlas online service. Please ignore the DuplicateWidgetID error! This is a bug in the streamlit package.', type='txt', accept_multiple_files = False, key='222' )
+        db_password_reading_in_process = True
+        if uploaded_file is not None:
+            # To convert to a string based IO:
+            stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+
+            # To read file as string:
+            string_data = stringio.read()
+            with open('PASSW_DB.txt', 'w') as file:
+                file.write(string_data)
+            st.experimental_rerun()
+    else:
+        if encrypt_key_file_found == True:
+            main()
+        elif encrypt_key_reading_in_process == False:
+            check_encrypt_key()
+        # otherwise we should wait uploading the encrypt_key_file and from there we continue
+
 
 
 def load_db(passw, key):
@@ -89,10 +178,15 @@ def show_images(df_filtered, grid_size, page, captions):
                 cols[x].markdown('**' + item + '**: ' + df_filtered[(df_filtered.filename == img_name)][item].to_string(index=False))
             cols[x].dataframe(df_filtered[(df_filtered.filename == img_name)])
 
-
-
 def main():
-    """Main function. Run this to run the app"""
+
+
+    with open('KEY_DB.txt', 'r') as file:
+        key = file.read().encode()
+
+    with open('PASSW_DB.txt', 'r') as file:
+        passw = file.read().replace('\n', '')
+
     st.set_page_config(
         page_title="Smart Image Scraper",
         page_icon="🧊",
@@ -102,6 +196,8 @@ def main():
 
     st.title("Smart Image Scraper Results")
     st.write("")
+
+
 
     st.sidebar.title("Settings")
     st.sidebar.header("Grid size")
@@ -136,6 +232,11 @@ def main():
     countries = df_decrypted.country.unique().tolist()
     countries_selected = st.sidebar.multiselect('', countries, countries)
 
+    date_max = pd.to_datetime(df_decrypted['date taken'], format='%Y-%m-%d %H:%M:%S').apply(lambda x: x.date()).max()
+    date_min = pd.to_datetime(df_decrypted['date taken'], format='%Y-%m-%d %H:%M:%S').apply(lambda x: x.date()).min()
+    st.sidebar.header("Date Taken")
+    date_low, date_high = st.sidebar.slider("", date_min, date_max, (date_min, date_max))
+
     view_max = df_decrypted.views.max().astype(int).item()
     view_min = df_decrypted.views.min().astype(int).item()
     st.sidebar.header("View Count")
@@ -159,6 +260,8 @@ def main():
                                    & (df_decrypted['cage prediction score'] <= pred_thr_cage_high)
                                    & (df_decrypted['views'].astype(int) <= view_high)
                                    & (df_decrypted['views'].astype(int) >= view_low)
+                                   & (pd.to_datetime(df_decrypted['date taken'], format='%Y-%m-%d %H:%M:%S').apply(lambda x: x.date()) <= date_high)
+                                   & (pd.to_datetime(df_decrypted['date taken'], format='%Y-%m-%d %H:%M:%S').apply(lambda x: x.date()) >= date_low)
                                    & (df_decrypted['search term'].isin(terms_selected))
                                    & (df_decrypted['country'].isin(countries_selected))
                                    ]
@@ -251,28 +354,14 @@ def main():
             expand1.markdown('* **search term**  by color')
             expand1.write({"monkey wild": "green", "monkey cage": "red"})
 
-    # with st.beta_container():
-    #     st.image(image1, width = 500)
-    #
-    # with st.beta_container():
-    #     st.image(image2, width = 500)
-    #
-    # with st.beta_container():
-    #     st.image(image3, width=500)
-    #
-    # with st.beta_container():
-    #     st.image(image4, width=500)
 
+check_encrypt_and_passw_files()
 
-
-
-
-
-    # key = read_encrypt_key()
-    # passw = read_db_password()
     # df_decrypted = load_db(passw, key)
 
 
-main()
 
-print()
+
+
+
+
