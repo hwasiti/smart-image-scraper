@@ -8,6 +8,6 @@ ExifRead==2.3.2
 pydeck==0.6.0
 streamlit==0.76.0
 requests==2.25.1
-pandas==1.2.1
+pandas
 Pillow==8.1.0
 dnspython
