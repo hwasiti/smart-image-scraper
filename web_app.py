@@ -16,7 +16,7 @@ def decrypt(token: bytes, key: bytes) -> bytes:
 
 def check_encrypt_and_passw_files():
     # Read the encryption key from the stored key file
-
+    uploaded_file = None
     try:
         with open('KEY_DB.txt', 'r') as file:
             key = file.read().encode()
