@@ -19,6 +19,8 @@ A third script will encrypt the sensitive information scraped using an automatic
   
 * The search terms and scraped data can be in multiple languages. In our experiments, it showed that if we search the same term translated into multiple languages other than only English, the results of the searched images will be much more in quantity. For instance, searching for a monkey can be repeated with the search term in Italian, Spanish, Japanese, French, German, Chinese, Arabic, Russian...etc. The code respects the different encoding of the characters that are necessary to show texts in multiple languages.
 
+* Deploying the scraped image and metadata browser web app on Heroku. It has more than 10 filtering and visualization methods already built in.
+
 
 ## Installation
 
