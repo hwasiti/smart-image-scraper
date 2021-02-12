@@ -11,3 +11,4 @@ exifread
 cryptography
 streamlit
 dnspython
+

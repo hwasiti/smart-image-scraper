@@ -2,9 +2,11 @@ import os
 import streamlit as st
 import pymongo
 import pandas as pd
+import numpy as np
 from cryptography.fernet import Fernet
 from PIL import Image
 from math import floor, ceil
+import pydeck as pdk
 
 
 def decrypt(token: bytes, key: bytes) -> bytes:
@@ -132,16 +134,26 @@ def main():
 
     st.sidebar.header("Country")
     countries = df_decrypted.country.unique().tolist()
-
     countries_selected = st.sidebar.multiselect('', countries, countries)
+
     view_max = df_decrypted.views.max().astype(int).item()
     view_min = df_decrypted.views.min().astype(int).item()
     st.sidebar.header("View Count")
-
     view_low, view_high = st.sidebar.slider("", view_min, view_max, (view_min, view_max))
 
+    st.sidebar.header("Search in Metadata")
+    search_query = st.sidebar.text_input('Enter below anything to search', value='')
+
+    # Apply the search query
+    df_filtered = df_decrypted[
+        df_decrypted.apply(lambda row: row.astype(str).str.contains(search_query, case=False).any(), axis=1)]
+
+    # Show Map
+    st.sidebar.header("Show Map")
+    chk_show_map = st.sidebar.checkbox('')
+
     # filtering the DB
-    df_filtered = df_decrypted.loc[(df_decrypted['species prediction score'] >= pred_thr_monkey_low)
+    df_filtered = df_filtered.loc[(df_decrypted['species prediction score'] >= pred_thr_monkey_low)
                                    & (df_decrypted['cage prediction score'] >= pred_thr_cage_low)
                                    & (df_decrypted['species prediction score'] <= pred_thr_monkey_high)
                                    & (df_decrypted['cage prediction score'] <= pred_thr_cage_high)
@@ -152,6 +164,8 @@ def main():
                                    ]
 
     df_filtered.reset_index(drop=True, inplace=True)
+
+
 
     st.markdown('**Total images = ** ' + str(len(df_filtered)))
 
@@ -170,6 +184,72 @@ def main():
         st.write("No results to show")
     else:
         show_images(df_filtered, grid_size, current_page, captions)
+        # Draw map
+        if chk_show_map == True:
+            expand1 = st.beta_expander('Show Map', True)
+            df_geo = df_filtered[['search term', 'latitude', 'longitude']][
+                (df_filtered['latitude'] != 0) & (df_filtered['longitude'] != 0)]  # ignore those without gps info
+            df_geo.reset_index(drop=True, inplace=True)
+            point_colors = {'monkey wild': "green", 'monkey cage': "blue"}
+
+            expand1.pydeck_chart(pdk.Deck(
+                map_style = 'mapbox://styles/mapbox/light-v9',
+                initial_view_state = pdk.ViewState(
+                    latitude = 0,
+                    longitude = 0,
+                    zoom = 1,
+                    pitch = 50,
+                ),
+
+                layers = [
+                    pdk.Layer(
+                        'HexagonLayer',
+                        data = df_geo,
+                        get_position = '[longitude, latitude]',
+                        radius = 200,
+                        elevation_scale = 4,
+                        elevation_range = [0, 1000],
+                        pickable = True,
+                        extruded = True,
+                    ),
+                    pdk.Layer(
+                        'ScatterplotLayer',
+                        data = df_geo.loc[(df_geo['search term'] == 'monkey cage')],
+                        get_position = '[longitude, latitude]',
+                        pickable=False,
+                        opacity=0.8,
+                        stroked=True,
+                        filled=True,
+                        radius_scale=6,
+                        radius_min_pixels=3,
+                        radius_max_pixels=100,
+                        line_width_min_pixels=1,
+                        get_radius="exits_radius",
+                        get_fill_color=[255, 0, 0],
+                        get_line_color=[255, 0, 0],
+                    ),
+                    pdk.Layer(
+                        'ScatterplotLayer',
+                        data=df_geo.loc[(df_geo['search term'] == 'monkey wild')],
+                        get_position='[longitude, latitude]',
+                        pickable=False,
+                        opacity=0.8,
+                        stroked=True,
+                        filled=True,
+                        radius_scale=6,
+                        radius_min_pixels=3,
+                        radius_max_pixels=100,
+                        line_width_min_pixels=1,
+                        get_radius="exits_radius",
+                        get_fill_color=[0, 255, 0],
+                        get_line_color=[0, 255, 0],
+                    ),
+                ],
+            ))
+            expand1.write('The maps shows the scatter-plot of the datapoints')
+            expand1.markdown('* **location** by latitude, longitude coordinates')
+            expand1.markdown('* **search term**  by color')
+            expand1.write({"monkey wild": "green", "monkey cage": "red"})
 
     # with st.beta_container():
     #     st.image(image1, width = 500)
