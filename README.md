@@ -236,7 +236,7 @@ And it is obvious that the user when uploaded the image and made the title _Monk
 * Show the pictures in a resizable gallery with grids from 1x1 up to 8x8. Even on mobile phones, the layout is responsive!.
 * Metadata shown as a table below each image that can be expanded to full screen.
 * Filter data according to a chosen country with the ability to multi-select countries if needed.
-* Plotting the pictures taken on the World map according to the GPS Deotags of the scraped metadata.
+* Plotting the pictures taken on the World map according to the GPS Geotags of the scraped metadata.
 * Filtering out according to View counts in Flickr.
 * Reloading the database from MongoDB Atlas in case the online database has been updated with new information.
 * Recording a screencast for the user's browsing of the web app and save it as a video file.
