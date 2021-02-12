@@ -242,6 +242,11 @@ And it is obvious that the user when uploaded the image and made the title _Monk
 * Recording a screencast for the user's browsing of the web app and save it as a video file.
 * Easily updating from Github to Heroku for any changes in my app.
 
+<p align="center">
+  <img src="readme_files/smart-image-scraper-herokuapp-webapp.jpg">
+  <br><i>Deployed web app for this project <a href="https://smart-image-scraper.herokuapp.com">(Link)</a></i>
+</p>
+
 
 ## Future work and enhancements
 * We could do better than Google Vision API. If we train our own deep learning model on the search terms by several thousands of scraped training data, potentially that can be a better customized model than what Google is providing. The Google Vision API is serving a DL model that has been [trained on ~20K of labels](https://stackoverflow.com/a/57649116/1970830), which can be quite challenging in terms of prediction accuracy. If we train on only a few search terms that we are interested in, the model will be much better. Besides, Google Vision API will not give labels that have lower than 0.5 confidence scores. In our experiments, we noticed that this threshold is relatively high and a few little vague monkey pictures are missed. If they would allow to set a lower threshold like 0.2 and let the user decide and pick her/his own threshold, that would be much better and flexible. In fact, I intend to build a web app that has a slider to assign the threshold for scores of cage and another slider for the threshold of monkeys predictions. By playing with these two sliders, the user can see in real-time interaction with the image thumbnail list what is the optimum threshold values to choose.
