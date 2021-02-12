@@ -276,6 +276,14 @@ def main():
     st.sidebar.header("Show Map")
     chk_show_map = st.sidebar.checkbox('')
 
+    # Refresh online database load
+    st.sidebar.header("Reload Online DB")
+    if st.sidebar.button('Refresh DB'):
+        os.remove("df_100_per_search_encrypted.json")  # delete the local DB file
+        st.experimental_rerun()
+
+
+
     # filtering the DB
     df_filtered = df_filtered.loc[(df_decrypted['species prediction score'] >= pred_thr_monkey_low)
                                    & (df_decrypted['cage prediction score'] >= pred_thr_cage_low)
