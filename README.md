@@ -72,6 +72,23 @@ The  `flickr_scraper.py` script can be repeated as many times as wished with dif
   
 * Run `pd_to_mongodb_converter.py` to convert the Pandas DataFrames into MongoDB. Please note, you should have MongoDB installed locally or you should use your own MongoDB server online for this step.
 
+6. If you wish to deploy a web app that browses the scraped images and its metadata, `web-app.py` is just doing that with a wealth of data analysis tools. The deployed web app for this project is [here](https://smart-image-scraper.herokuapp.com).
+
+Here are some of the features built in the web app:
+* The web app now can browse all my scraping images and metadata (reading them from an online NoSQL database). 
+* Search inside the metadata and return the findings. 
+* Apply deep learning predictions threshold to clean the scraped dataset.
+* Show the pictures in a resizable gallery with grids from 1x1 up to 8x8. Even on mobile phones, the layout is responsive!.
+* Metadata shown as a table below each image that can be expanded to full screen.
+* Filter data according to a chosen country with the ability to multi-select countries if needed.
+* Plotting the pictures taken on the World map according to the GPS Deotags of the scraped metadata.
+* Filtering out according to View counts in Flickr.
+* Reloading the database from MongoDB Atlas in case the online database has been updated with new information.
+* Recording a screencast for the user's browsing of the web app and save it as a video file.
+* Easily updating from Github to Heroku for any changes in my app.
+
+
+
 ## Usage details
 
 1. Create a Flickr account or sign-in
