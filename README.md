@@ -72,21 +72,7 @@ The  `flickr_scraper.py` script can be repeated as many times as wished with dif
   
 * Run `pd_to_mongodb_converter.py` to convert the Pandas DataFrames into MongoDB. Please note, you should have MongoDB installed locally or you should use your own MongoDB server online for this step.
 
-6. If you wish to deploy a web app that browses the scraped images and its metadata, `web-app.py` is just doing that with a wealth of data analysis tools. The deployed web app for this project is [here](https://smart-image-scraper.herokuapp.com).
-
-Here are some of the features built in the web app:
-* The web app now can browse all my scraping images and metadata (reading them from an online NoSQL database). 
-* Search inside the metadata and return the findings. 
-* Apply deep learning predictions threshold to clean the scraped dataset.
-* Show the pictures in a resizable gallery with grids from 1x1 up to 8x8. Even on mobile phones, the layout is responsive!.
-* Metadata shown as a table below each image that can be expanded to full screen.
-* Filter data according to a chosen country with the ability to multi-select countries if needed.
-* Plotting the pictures taken on the World map according to the GPS Deotags of the scraped metadata.
-* Filtering out according to View counts in Flickr.
-* Reloading the database from MongoDB Atlas in case the online database has been updated with new information.
-* Recording a screencast for the user's browsing of the web app and save it as a video file.
-* Easily updating from Github to Heroku for any changes in my app.
-
+* Deploy `web-app.py` to Heroku, after Exporting the local database to MongoDB Atlas Database (Cloud DBaaS for MongoDB) to make the web app able to see the changes or additions in the online database.
 
 
 ## Usage details
@@ -237,6 +223,23 @@ For example, one of the image search results in flickr for the search term _monk
 </p>
 
 And it is obvious that the user when uploaded the image and made the title _Monkey cage_, it was not meant that in the cage was a monkey. So for such case, the deep learning cleaning method is very useful. Indeed, with the implemented Google Vision API use, the prediction score showed that there are no monkeys in the above image.
+
+
+6. If you wish to deploy a web app that browses the scraped images and its metadata, `web-app.py` is just doing that with a wealth of data analysis tools. The deployed web app for this project is [here](https://smart-image-scraper.herokuapp.com).
+
+Here are some of the features built in the web app:
+* The web app now can browse all my scraping images and metadata (reading them from an online NoSQL database). 
+* Search inside the metadata and return the findings. 
+* Apply deep learning predictions threshold to clean the scraped dataset.
+* Show the pictures in a resizable gallery with grids from 1x1 up to 8x8. Even on mobile phones, the layout is responsive!.
+* Metadata shown as a table below each image that can be expanded to full screen.
+* Filter data according to a chosen country with the ability to multi-select countries if needed.
+* Plotting the pictures taken on the World map according to the GPS Deotags of the scraped metadata.
+* Filtering out according to View counts in Flickr.
+* Reloading the database from MongoDB Atlas in case the online database has been updated with new information.
+* Recording a screencast for the user's browsing of the web app and save it as a video file.
+* Easily updating from Github to Heroku for any changes in my app.
+
 
 ## Future work and enhancements
 * We could do better than Google Vision API. If we train our own deep learning model on the search terms by several thousands of scraped training data, potentially that can be a better customized model than what Google is providing. The Google Vision API is serving a DL model that has been [trained on ~20K of labels](https://stackoverflow.com/a/57649116/1970830), which can be quite challenging in terms of prediction accuracy. If we train on only a few search terms that we are interested in, the model will be much better. Besides, Google Vision API will not give labels that have lower than 0.5 confidence scores. In our experiments, we noticed that this threshold is relatively high and a few little vague monkey pictures are missed. If they would allow to set a lower threshold like 0.2 and let the user decide and pick her/his own threshold, that would be much better and flexible. In fact, I intend to build a web app that has a slider to assign the threshold for scores of cage and another slider for the threshold of monkeys predictions. By playing with these two sliders, the user can see in real-time interaction with the image thumbnail list what is the optimum threshold values to choose.
