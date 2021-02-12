@@ -227,9 +227,9 @@ For example, one of the image search results in flickr for the search term _monk
 And it is obvious that the user when uploaded the image and made the title _Monkey cage_, it was not meant that in the cage was a monkey. So for such case, the deep learning cleaning method is very useful. Indeed, with the implemented Google Vision API use, the prediction score showed that there are no monkeys in the above image.
 
 
-6. If you wish to deploy a web app that browses the scraped images and its metadata, `web-app.py` is just doing that with a wealth of data analysis tools. The deployed web app for this project is [here](https://smart-image-scraper.herokuapp.com).
+**6. If you wish to deploy a web app** that browses the scraped images and its metadata, `web-app.py` is just doing that with a wealth of data analysis tools. The deployed web app for this project is [here](https://smart-image-scraper.herokuapp.com).
 
-Here are some of the features built in the web app:
+## Here are some of the features built in the web app:
 * The web app now can browse all my scraping images and metadata (reading them from an online NoSQL database). 
 * Search inside the metadata and return the findings. 
 * Apply deep learning predictions threshold to clean the scraped dataset.
