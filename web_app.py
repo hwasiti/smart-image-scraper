@@ -134,20 +134,37 @@ def load_db(passw, key):
     collection = db.scraped_metadata_100_per_search_with_PREDS_encrypted
     df = pd.DataFrame(list(collection.find()))
 
-    print('Database read successfully...')
+    print('Database read from Mongo Atlas successfully...')
+    df_decrypted = df.copy()
 
     # Decrypt columns with the sensitive info
-    df_decrypted = df.copy()
+    fn = 'df_100_per_search_encrypted.json'
+    df.to_json(fn, default_handler=str) # save the encrypted database as PD for faster access on next runs
+
+
     cols_to_decrypt = ['owner name', 'path alias', 'owner', 'exif data']
 
     for index, row in df_decrypted.iterrows():
         for col in cols_to_decrypt:
             data = df_decrypted.loc[row.name, col]
             df_decrypted.loc[row.name, col] = decrypt(data.encode(), key).decode()
+    print('Database decrypted successfully...')
     return df_decrypted
 
-def load_db_from_pd():
-    df_decrypted = pd.read_json(open('output' + os.sep + 'df_100_per_search.json'))
+
+def load_db_from_pd(key):
+    fn = 'df_100_per_search_encrypted.json'
+    df_encrypted = pd.read_json(open(fn))
+    print('Database read from local storage successfully...')
+
+    df_decrypted = df_encrypted.copy()
+    cols_to_decrypt = ['owner name', 'path alias', 'owner', 'exif data']
+
+    for index, row in df_decrypted.iterrows():
+        for col in cols_to_decrypt:
+            data = df_decrypted.loc[row.name, col]
+            df_decrypted.loc[row.name, col] = decrypt(data.encode(), key).decode()
+    print('Database decrypted successfully...')
     return df_decrypted
 
 def show_images(df_filtered, grid_size, page, captions):
@@ -225,8 +242,14 @@ def main():
     st.sidebar.header("DL prediction of Cage")
     pred_thr_cage_low, pred_thr_cage_high = st.sidebar.slider("", 0.0, 1.0, (0.45, 1.0), 0.05,
                                                                key='12')
+    try:
+        fn = 'df_100_per_search_encrypted.json'
+        with open(fn, 'r') as file:  # Check file available?
+            pd_data = file.read()
+        df_decrypted = load_db_from_pd(key)
+    except FileNotFoundError:
+        df_decrypted = load_db(passw, key)
 
-    df_decrypted = load_db_from_pd()
 
     st.sidebar.header("Country")
     countries = df_decrypted.country.unique().tolist()
@@ -357,7 +380,6 @@ def main():
 
 check_encrypt_and_passw_files()
 
-    # df_decrypted = load_db(passw, key)
 
 
 
