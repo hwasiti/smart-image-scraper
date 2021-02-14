@@ -6,6 +6,8 @@ To clean the images, another script has been included to apply Google Vision API
 
 A third script will encrypt the sensitive information scraped using an automatically random encryption key. This key can be used later on when decryption of this kind of info is necessary. Importantly, the database files will be served online or stored in disk drives and this will protect the scraped data from any potential security threats. The script will also generate NoSQL MongoDB database on a local (or online) MongoDB client for the scraped data.
 
+Here is a [web app](https://smart-image-scraper.herokuapp.com/) that has been developed using the code in this repo which uses more than 10 data analysis tools to clean the dataset using deep learning, analyze and visualize the the distribution, habitat use, and conservation status of Monkey species around the world. 
+
 ## Features
 
 * Image scraper with a wealth of metadata downloaded from Flickr
@@ -237,7 +239,7 @@ And it is obvious that the user when uploaded the image and made the title _Monk
 ## Here are some of the features built in the web app:
 * The web app now can browse all my scraping images and metadata (reading them from an online NoSQL database). 
 * Search inside the metadata and return the findings. 
-* Apply deep learning predictions threshold to clean the scraped dataset.
+* Apply deep learning prediction threshold to clean the scraped dataset.
 * Show the pictures in a resizable gallery with grids from 1x1 up to 8x8. Even on mobile phones, the layout is responsive!.
 * Metadata shown as a table below each image that can be expanded to full screen.
 * Filter data according to a chosen country with the ability to multi-select countries if needed.
