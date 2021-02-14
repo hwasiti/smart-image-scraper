@@ -74,7 +74,12 @@ The  `flickr_scraper.py` script can be repeated as many times as wished with dif
   
 * Run `pd_to_mongodb_converter.py` to convert the Pandas DataFrames into MongoDB. Please note, you should have MongoDB installed locally or you should use your own MongoDB server online for this step.
 
-* Deploy `web-app.py` to Heroku, after Exporting the local database to MongoDB Atlas Database (Cloud DBaaS for MongoDB) to make the web app able to see the changes or additions in the online database.
+* Deploy `web-app.py` to Heroku, after Exporting the local database to MongoDB Atlas Database (Cloud DBaaS for MongoDB) to make the web app able to see the changes or additions in the online database. You need to set environment variables in Heroku to put the encryption key and MongoDB Atlas password in them, otherwise the app will ask you for both `PASSW_DB.txt` and `KEY_DB.txt` files everytime the dyno restarts.
+Example:
+  ```python
+    heroku config:set SECRET_KEY="YOUR_SECRET_KEY_VALUE" --app APP_NAME
+    heroku config:set SECRET_PASSWORD="YOUR_SECRET_PASSWORD" --app APP_NAME
+  ```
 
 
 ## Usage details
