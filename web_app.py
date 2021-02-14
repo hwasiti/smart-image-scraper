@@ -15,7 +15,20 @@ def decrypt(token: bytes, key: bytes) -> bytes:
 
 
 def check_encrypt_and_passw_files():
-    # Read the encryption key from the stored key file
+    # Read the encryption key and Mongo Atlas password from the files: KEY_DB.txt, PASSW_DB.txt
+    # Update: If this web app deployed to Heroku, this is not the proper way to do it
+    # Your file isn't being overwritten by Git; Heroku's filesystem is ephemeral.
+    # Any changes made to it will be lost any time the dyno restarts.
+    # This happens frequently (at least once per day) whether you deploy or not.
+    # Source: https://stackoverflow.com/a/63457968/1970830
+    # The proper way is to use an environment variable instead files that are not part of the git repo.
+    # The code will try to read environment variables, if failed will still try to read these files
+    # (to avoid setting env variables in local machines). And I will keep the streamlit code that will
+    # ask for the files to be uploaded if both env variables and files are missing, instead of giving an error,
+    # but keep in mind that Heroku dyno will restart within few hours and will ask for these files again
+    # if the Heroku OS variables has not been set. See how to setup such env variables and how to read them here:
+    # https://stackoverflow.com/a/47949239/1970830
+
     uploaded_file = None
     try:
         with open('KEY_DB.txt', 'r') as file:
@@ -145,12 +158,14 @@ def show_images(df_filtered, grid_size, page, captions):
             cols[x].dataframe(df_filtered[(df_filtered.filename == img_name)])
 
 
-def main():
-    with open('KEY_DB.txt', 'r') as file:
-        key = file.read().encode()
+def main(key=None, passw=None):
+    if key is None:
+        with open('KEY_DB.txt', 'r') as file:
+            key = file.read().encode()
 
-    with open('PASSW_DB.txt', 'r') as file:
-        passw = file.read().replace('\n', '')
+    if passw is None:
+        with open('PASSW_DB.txt', 'r') as file:
+            passw = file.read().replace('\n', '')
 
     st.set_page_config(
         page_title="Smart Image Scraper",
@@ -323,10 +338,20 @@ def main():
                     ),
                 ],
             ))
-            expand1.write('The maps shows the scatter-plot of the datapoints')
+            expand1.write('The map shows the scatter-plot of the datapoints')
             expand1.markdown('* **location** by latitude, longitude coordinates')
             expand1.markdown('* **search term**  by color')
             expand1.write({"monkey wild": "green", "monkey cage": "red"})
 
 
-check_encrypt_and_passw_files()
+# Set these as environment variables and put the encryption key and MongoDB Atlas password in them
+# This is especially important if you deploy the web app to Heroku, since it uses ephemeral-filesystem
+# https://devcenter.heroku.com/articles/dynos#ephemeral-filesystem
+# and dyno will restart at least once a day and deletes all local storage (any file not in git repo will be deleted)
+key = os.getenv('SECRET_KEY')
+passw = os.getenv('SECRET_PASSWORD')
+
+if key is None or passw is None:
+    check_encrypt_and_passw_files()
+else:
+    main(key, passw)
