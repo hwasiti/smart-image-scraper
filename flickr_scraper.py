@@ -157,12 +157,6 @@ if __name__ == '__main__':
     pd_data.set_index("filename", inplace=True)
     pd_data.reset_index(inplace=True)
 
-    # Saving the csv with special character separator like ζ works well with even non-english commonly used text
-    print()
-    fn = 'output' + os.sep + 'flickr_' + args.search.replace(' ', '_') + '_df.csv'
-    pd_data.to_csv(fn, encoding='utf-8-sig', sep='ζ')
-    print('Image data saved in: ' + fn)
-
     fn = 'output' + os.sep + 'flickr_' + args.search.replace(' ', '_') + '_df.json'
     pd_data.to_json(fn)
     print('Image data saved in: ' + fn)
@@ -170,3 +164,12 @@ if __name__ == '__main__':
     fn = 'output' + os.sep + 'flickr_' + args.search.replace(' ', '_') + '_df_100.json'
     pd_data.head(100).to_json(fn)
     print('First 100 Image data saved in: ' + fn)
+
+    # Saving the csv with special character separator like ζ works well with even non-english commonly used text
+    print()
+    fn = 'output' + os.sep + 'flickr_' + args.search.replace(' ', '_') + '_df.csv'
+    pd_data = pd_data.applymap(
+        lambda x: str(x).replace('\n', ' '))  # Replace newlines to not affect importing them in Spreadsheets
+    pd_data = pd_data.applymap(lambda x: str(x).replace('\r', ' '))
+    pd_data.to_csv(fn, encoding='utf-8-sig', sep='ζ')
+    print('Image data saved in: ' + fn)
