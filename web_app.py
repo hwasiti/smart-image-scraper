@@ -143,7 +143,7 @@ def show_images(df_filtered, grid_size, page, captions):
         n_images_to_show = last_img_n - (page - 1) * n_grid_images
 
     for y in range(last_y):
-        cols = st.beta_columns(grid_size)
+        cols = st.columns(grid_size)
         last_x = n_images_to_show - (last_y - 1) * grid_size
         for x in range(last_x):
             img_name = df_filtered.filename[(page - 1) * n_grid_images + y * grid_size + x]
@@ -261,7 +261,7 @@ def main(key=None, passw=None):
 
     st.markdown('**Total images = ** ' + str(len(df_filtered)))
 
-    col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12, col13 = st.beta_columns(
+    col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12, col13 = st.columns(
         (1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1))
     total_pages = ceil(len(df_filtered) / (grid_size * grid_size))
     if total_pages == 0:
