@@ -6,7 +6,7 @@ To clean the images, another script has been included to apply Google Vision API
 
 A third script will encrypt the sensitive information scraped using an automatically random encryption key. This key can be used later on when decryption of this kind of info is necessary. Importantly, the database files will be served online or stored in disk drives and this will protect the scraped data from any potential security threats. The script will also generate NoSQL MongoDB database on a local (or online) MongoDB client for the scraped data.
 
-Here is a [web app](https://smart-image-scraper.herokuapp.com/) that has been developed using the code in this repo which uses more than 10 data analysis tools to clean the dataset using deep learning, analyze and visualize the the distribution, habitat use, and conservation status of Monkey species around the world. 
+Here is a [web app](https://bit.ly/smart_image_scraper) that has been developed using the code in this repo which uses more than 10 data analysis tools to clean the dataset using deep learning, analyze and visualize the the distribution, habitat use, and conservation status of Monkey species around the world. 
 
 ## Features
 
@@ -21,7 +21,7 @@ Here is a [web app](https://smart-image-scraper.herokuapp.com/) that has been de
   
 * The search terms and scraped data can be in multiple languages. In our experiments, it showed that if we search the same term translated into multiple languages other than only English, the results of the searched images will be much more in quantity. For instance, searching for a monkey can be repeated with the search term in Italian, Spanish, Japanese, French, German, Chinese, Arabic, Russian...etc. The code respects the different encoding of the characters that are necessary to show texts in multiple languages.
 
-* Deploying the scraped image and metadata browser web app on Heroku. It has more than 10 filtering and visualization methods already built in.
+* Deploying the scraped image and metadata browser web app. It has more than 10 filtering and visualization methods already built in.
 
 
 ## Installation
@@ -76,7 +76,7 @@ The  `flickr_scraper.py` script can be repeated as many times as wished with dif
   
 * Run `pd_to_mongodb_converter.py` to convert the Pandas DataFrames into MongoDB. Please note, you should have MongoDB installed locally or you should use your own MongoDB server online for this step.
 
-* Deploy `web-app.py` to Heroku, after Exporting the local database to MongoDB Atlas Database (Cloud DBaaS for MongoDB) to make the web app able to see the changes or additions in the online database. You need to set environment variables in Heroku to put the encryption key and MongoDB Atlas password in them, otherwise the app will ask you for both `PASSW_DB.txt` and `KEY_DB.txt` files everytime the dyno restarts.
+* Deploy `web-app.py`, after Exporting the local database to MongoDB Atlas Database (Cloud DBaaS for MongoDB) to make the web app able to see the changes or additions in the online database. You need to set environment variables in host to put the encryption key and MongoDB Atlas password in them, otherwise the app will ask you for both `PASSW_DB.txt` and `KEY_DB.txt` files everytime the dyno restarts. If the host provider is Heroku, then:
 Example:
   ```python
     heroku config:set SECRET_KEY="YOUR_SECRET_KEY_VALUE" --app APP_NAME
@@ -234,7 +234,7 @@ For example, one of the image search results in flickr for the search term _monk
 And it is obvious that the user when uploaded the image and made the title _Monkey cage_, it was not meant that in the cage was a monkey. So for such case, the deep learning cleaning method is very useful. Indeed, with the implemented Google Vision API use, the prediction score showed that there are no monkeys in the above image.
 
 
-**6. If you wish to deploy a web app** that browses the scraped images and its metadata, `web-app.py` is just doing that with a wealth of data analysis tools. The deployed web app for this project is [here](https://smart-image-scraper.herokuapp.com).
+**6. If you wish to deploy a web app** that browses the scraped images and its metadata, `web-app.py` is just doing that with a wealth of data analysis tools. The deployed web app for this project is [here](https://bit.ly/smart_image_scraper).
 
 ## Here are some of the features built in the web app:
 * The web app now can browse all my scraping images and metadata (reading them from an online NoSQL database). 
@@ -247,11 +247,11 @@ And it is obvious that the user when uploaded the image and made the title _Monk
 * Filtering out according to View counts in Flickr.
 * Reloading the database from MongoDB Atlas in case the online database has been updated with new information.
 * Recording a screencast for the user's browsing of the web app and save it as a video file.
-* Easily updating from Github to Heroku for any changes in my app.
+
 
 <p align="center">
   <img src="readme_files/smart-image-scraper-herokuapp-webapp.jpg">
-  <br><i>Deployed web app for this project <a href="https://smart-image-scraper.herokuapp.com">(Link)</a></i>
+  <br><i>Deployed web app for this project <a href="https://bit.ly/smart_image_scraper">(Link)</a></i>
 </p>
 
 
